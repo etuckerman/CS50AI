@@ -7,8 +7,6 @@ Welcome to my GitHub repository where I document my journey through the CS50 AI 
 - [About the Course](#about-the-course)
 - [Course Structure](#course-structure)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## About the Course
 
