@@ -6,7 +6,6 @@ Welcome to my GitHub repository where I document my journey through the CS50 AI 
 
 - [About the Course](#about-the-course)
 - [Course Structure](#course-structure)
-- [Projects](#projects)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
@@ -27,15 +26,6 @@ The course is divided into several key topics:
 6. **Neural Networks**
 7. **Language**
 8. **Conclusion**
-
-## Projects
-
-Each project folder contains:
-
-- **README.md**: Overview of the project, explaining the main concepts and the approach taken.
-- **Source Code**: Implementation files for the project.
-- **Data**: Any datasets used in the project.
-- **Results**: Outputs or findings from the project.
 
 Here are some of the key projects:
 
