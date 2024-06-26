@@ -102,37 +102,38 @@ def shortest_path(source, target):
     frontier.add(start)
 
     # Initialize an empty explored set
-    explored = []
+    explored = set()
+
     # Keep looping until solution is found
     while True:
         # If nothing left in frontier, then no path
         if frontier.empty():
             return None
+
         # Choose a node from the frontier
         node = frontier.remove()
         print(f"node: {node}")
 
         # If node is the goal, then we have a solution
-        if node.state == target: 
-            return node
+        if node.state == target:
+            path = []
+            while node.parent is not None:
+                path.append((node.action, node.state))
+                node = node.parent
+            path.reverse()
+            return path
         
-        else:
-            #find current node neighbors
-            neighbors = neighbors_for_person(node.state)
-            print(f"neighbors: {neighbors}")
-            for movie_id, person_id in neighbors:
-                if person_id == target:
-                    #if person_id is the target, add to explored and return path
-                    explored.append((movie_id, person_id))
-                    print(f"explored: {explored}")
-                    return explored 
-                else:
-                    #if person_id is not the target
-                    #add to explored and add neighbors to frontier
-                    explored.append((movie_id, person_id))
-                    print(f"explored: {explored}")
-                    frontier.add((movie_id, person_id))
-                    print(f"frontier: {frontier}")
+        # Mark node as explored
+        explored.add(node.state)
+
+        # Find current node neighbors
+        neighbors = neighbors_for_person(node.state)
+        print(f"neighbors: {neighbors}")
+
+        for movie_id, person_id in neighbors:
+            if person_id not in explored and not frontier.contains_state(person_id):
+                child = Node(state=person_id, parent=node, action=movie_id)
+                frontier.add(child)
 
 def person_id_for_name(name):
     """
