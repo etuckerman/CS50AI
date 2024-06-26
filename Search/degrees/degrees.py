@@ -55,7 +55,7 @@ def load_data(directory):
 def main():
     if len(sys.argv) > 2:
         sys.exit("Usage: python degrees.py [directory]")
-    directory = sys.argv[1] if len(sys.argv) == 2 else "large"
+    directory = "small" #sys.argv[1] if len(sys.argv) == 2 else "large" #uncomment this and remove "small"
 
     # Load data from files into memory
     print("Loading data...")
@@ -91,10 +91,48 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    #state = person_id
+    #action = movie_id
+    #parent = previous node
+    #target = person_id_to_find
 
-    # TODO
-    raise NotImplementedError
+    # Initialize frontier to just the starting position
+    start = Node(state=source, parent=None, action=None)
+    frontier = QueueFrontier()
+    frontier.add(start)
 
+    # Initialize an empty explored set
+    explored = []
+    # Keep looping until solution is found
+    while True:
+        # If nothing left in frontier, then no path
+        if frontier.empty():
+            return None
+        # Choose a node from the frontier
+        node = frontier.remove()
+        print(f"node: {node}")
+
+        # If node is the goal, then we have a solution
+        if node.state == target: 
+            return node
+        
+        else:
+            #find current node neighbors
+            neighbors = neighbors_for_person(node.state)
+            print(f"neighbors: {neighbors}")
+            for movie_id, person_id in neighbors:
+                if person_id == target:
+                    #if person_id is the target, add to explored and return path
+                    explored.append((movie_id, person_id))
+                    print(f"explored: {explored}")
+                    return explored 
+                else:
+                    #if person_id is not the target
+                    #add to explored and add neighbors to frontier
+                    explored.append((movie_id, person_id))
+                    print(f"explored: {explored}")
+                    frontier.add((movie_id, person_id))
+                    print(f"frontier: {frontier}")
 
 def person_id_for_name(name):
     """
