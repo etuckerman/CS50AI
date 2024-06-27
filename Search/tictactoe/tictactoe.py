@@ -52,7 +52,7 @@ def actions(board):
     Returns set of all possible actions (i, j) available on the board.
     """
     # if board[i][j] == EMPTY then it's a possible action
-    # return i, j
+    # return set of i, j
 
     possible_actions = set()
 
@@ -64,20 +64,48 @@ def actions(board):
     return possible_actions
 
 
-    raise NotImplementedError
+    #raise NotImplementedError
 
 
 def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    raise NotImplementedError
+    original_board = board.deepcopy()
+    #if the current move is an X then place an X on the board
+    if player(board) == X:
+        board[action[0]][action[1]] = X
+        return board
+    #if the current move is an O then place an O on the board
+    elif player(board) == O:
+        board[action[0]][action[1]] = O
+        return board
+    #else, raise an exception
+    else:
+        raise Exception("Invalid move")
+
+
+    #raise NotImplementedError
 
 
 def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
+
+    case1 = board[0][0] == board[0][1] == board[0][2] != None
+    case2 = board[1][0] == board[1][1] == board[1][2] != None
+    case3 = board[2][0] == board[2][1] == board[2][2] != None
+    case4 = board[0][0] == board[1][0] == board[2][0] != None
+    case5 = board[0][1] == board[1][1] == board[2][1] != None
+    case6 = board[0][2] == board[1][2] == board[2][2] != None
+    case7 = board[0][0] == board[1][1] == board[2][2] != None
+    case8 = board[0][2] == board[1][1] == board[2][0] != None
+
+    if case1 or case2 or case3 or case4 or case5 or case6 or case7 or case8:
+        return True
+
+
     raise NotImplementedError
 
 
