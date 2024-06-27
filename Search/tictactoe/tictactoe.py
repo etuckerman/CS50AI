@@ -30,8 +30,8 @@ def player(board):
     
     x_count = 0
     o_count = 0
-    for i in range(board):
-        for j in range(board[i]):
+    for i in range(len(board)):
+        for j in range(len(board[i])):
             if board[i][j] == X:
                 x_count += 1
             elif board[i][j] == O:
@@ -56,8 +56,8 @@ def actions(board):
 
     possible_actions = set()
 
-    for i in range(board):
-        for j in range(board[i]):
+    for i in range(len(board)):
+        for j in range(len(board[i])):
             if board[i][j] == EMPTY:
                 possible_actions.add((i, j))
     
@@ -71,15 +71,15 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    original_board = board.deepcopy()
+    board_copy = board.copy()
     #if the current move is an X then place an X on the board
     if player(board) == X:
-        board[action[0]][action[1]] = X
-        return board
+        board_copy[action[0]][action[1]] = X
+        return board_copy
     #if the current move is an O then place an O on the board
     elif player(board) == O:
-        board[action[0]][action[1]] = O
-        return board
+        board_copy[action[0]][action[1]] = O
+        return board_copy
     #else, raise an exception
     else:
         raise Exception("Invalid move")
@@ -107,8 +107,8 @@ def winner(board):
             return O 
         else:
             return X
-
-    raise NotImplementedError
+    return None
+    #raise NotImplementedError
 
 
 def terminal(board):
@@ -118,14 +118,19 @@ def terminal(board):
     #if max moves is 9 then game is over
     x_count = 0
     o_count = 0
-    for i in range(board):
-        for j in range(board[i]):
+    for i in range(len(board)):
+        for j in range(len(board[i])):
             if board[i][j] == X:
                 x_count += 1
             elif board[i][j] == O:
                 o_count += 1
     if x_count + o_count == 9:
         return True
+
+    elif winner(board) != None:
+        return True
+    else:
+        return False
     
     #raise NotImplementedError
 
@@ -134,11 +139,49 @@ def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
+
+    if winner(board) == X:
+        return 1
+    elif winner(board) == O:
+        return -1
+    else:
+        return 0
+
+    #raise NotImplementedError
 
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+
+    if terminal(board):
+        return None
+    
+    min_value = float("inf")
+    max_value = float("-inf")
+    best_action = None
+
+
+    #if player is X then maximize the value
+    if player(board) == X:
+        while actions(board):
+            action = actions(board)
+            value = min_value
+            if value > max_value:
+                max_value = value
+                best_action = action
+        return best_action
+    
+    #if player is O then minimize the value
+    elif player(board) == O:
+        while actions(board):
+            action = actions(board)
+            value = max_value
+            if value < min_value:
+                min_value = value
+                best_action = action
+        return best_action
+
+
     raise NotImplementedError
