@@ -103,8 +103,10 @@ def winner(board):
     case8 = board[0][2] == board[1][1] == board[2][0] != None
 
     if case1 or case2 or case3 or case4 or case5 or case6 or case7 or case8:
-        return True
-
+        if player(board) == X:
+            return O 
+        else:
+            return X
 
     raise NotImplementedError
 
