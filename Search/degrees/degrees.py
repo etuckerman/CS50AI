@@ -56,7 +56,7 @@ def main():
     if len(sys.argv) > 2:
         sys.exit("Usage: python degrees.py [directory]")
     directory = sys.argv[1] if len(sys.argv) == 2 else "large" 
-    
+
     # Load data from files into memory
     print("Loading data...")
     load_data(directory)
@@ -112,7 +112,7 @@ def shortest_path(source, target):
 
         # Choose a node from the frontier
         node = frontier.remove()
-        print(f"node: {node}")
+        #print(f"node: {node}")
 
         # If node is the goal, then we have a solution
         if node.state == target:
@@ -128,7 +128,7 @@ def shortest_path(source, target):
 
         # Find current node neighbors
         neighbors = neighbors_for_person(node.state)
-        print(f"neighbors: {neighbors}")
+        #print(f"neighbors: {neighbors}")
 
         for movie_id, person_id in neighbors:
             if person_id not in explored and not frontier.contains_state(person_id):
