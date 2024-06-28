@@ -80,20 +80,15 @@ def result(board, action):
     #print(f"action: {action}")
     if action is None:
         raise ValueError("Action cannot be None")
+    
     board_copy = copy.deepcopy(board)
-    #print(f"board: {board}")
-    #print(f"board_copy: {board_copy}")
-    # If the current move is an X then place an X on the board
-    if player(board) == X:
-        board_copy[action[0]][action[1]] = X
-        return board_copy
-    # If the current move is an O then place an O on the board
-    elif player(board) == O:
-        board_copy[action[0]][action[1]] = O
-        return board_copy
-    # Else, raise an exception
-    else:
-        raise Exception("Invalid move")
+    current_player = player(board)
+    
+    if board_copy[action[0]][action[1]] is not EMPTY:
+        raise ValueError("Invalid action: Cell is not empty")
+    
+    board_copy[action[0]][action[1]] = current_player
+    return board_copy
 
 
     #raise NotImplementedError
@@ -187,18 +182,19 @@ def minimax(board):
     if terminal(board):
             return utility(board)
 
+    current_player = player(board)
     
-    if player(board) == O:
+    if current_player == O:
         min_v = math.inf
         for action in actions(board):
-            v = min_value(result(board, action))
+            v = max_value(result(board, action))
             if v < min_v:
                 min_v = v
                 best_action = action
     else:
         max_v = -math.inf
         for action in actions(board):
-            v = max_value(result(board, action))
+            v = min_value(result(board, action))
             if v > max_v:
                 max_v = v
                 best_action = action
