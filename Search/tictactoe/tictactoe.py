@@ -77,12 +77,12 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    print(f"action: {action}")
+    #print(f"action: {action}")
     if action is None:
         raise ValueError("Action cannot be None")
     board_copy = copy.deepcopy(board)
-    print(f"board: {board}")
-    print(f"board_copy: {board_copy}")
+    #print(f"board: {board}")
+    #print(f"board_copy: {board_copy}")
     # If the current move is an X then place an X on the board
     if player(board) == X:
         board_copy[action[0]][action[1]] = X
@@ -183,21 +183,27 @@ def minimax(board):
         for action in actions(board):
             v = min(v, max_value(result(board, action)))
         return v
+    
+    if terminal(board):
+            return utility(board)
 
-    max_v = -math.inf
-    min_v = math.inf
-
-    for possible_actions in actions(board):
-        if player(board) == X:
-            if max_value(result(board, possible_actions)) > max_v:
-                max_v = max_value(result(board, possible_actions))
-                best_action = possible_actions
-        elif player(board) == O:
-            if min_value(result(board, possible_actions)) < min_v:
-                min_v = min_value(result(board, possible_actions))
-                best_action = possible_actions
+    
+    if player(board) == O:
+        min_v = math.inf
+        for action in actions(board):
+            v = min_value(result(board, action))
+            if v < min_v:
+                min_v = v
+                best_action = action
+    else:
+        max_v = -math.inf
+        for action in actions(board):
+            v = max_value(result(board, action))
+            if v > max_v:
+                max_v = v
+                best_action = action
                 
     return best_action
-    
+   
 
     #raise NotImplementedError
