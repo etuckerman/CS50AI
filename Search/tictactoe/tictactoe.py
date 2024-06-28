@@ -24,25 +24,29 @@ def player(board):
     Returns player who has the next turn on a board.
     """
     # Count how many X and Os on the board
-    # if len(X) <= len(O) then it's X's turn
+    # if len(X) <= len(O) then it's X's turn because X goes first
     # return X
     # else it's O's turn
     # return O
     
     x_count = 0
     o_count = 0
+
     for i in range(len(board)):
         for j in range(len(board[i])):
             if board[i][j] == X:
                 x_count += 1
             elif board[i][j] == O:
                 o_count += 1
+
     if x_count <= o_count:
-        print(f"X's turn...")
+        #print(f"X's turn...")
         return X
-    else:
-        print(f"O's turn...")
+    elif x_count > o_count:
+        #print(f"O's turn...")
         return O
+    else:
+        raise Exception("Invalid player")
 
 
     #raise NotImplementedError
@@ -62,6 +66,7 @@ def actions(board):
             if board[i][j] == EMPTY:
                 possible_actions.add((i, j))
     
+    print(f"possible actions: {possible_actions}")
     return possible_actions
 
 
@@ -73,15 +78,17 @@ def result(board, action):
     Returns the board that results from making move (i, j) on the board.
     """
     print(f"action: {action}")
-    
+
     board_copy = copy.deepcopy(board)
+    print(f"board: {board}")
+    print(f"board_copy: {board_copy}")
     #if the current move is an X then place an X on the board
     if player(board) == X:
-        board_copy[action[0]][action[1]] = X
+        board_copy[0][1] = X
         return board_copy
     #if the current move is an O then place an O on the board
     elif player(board) == O:
-        board_copy[action[0]][action[1]] = O
+        board_copy[0][1] = O
         return board_copy
     #else, raise an exception
     else:
