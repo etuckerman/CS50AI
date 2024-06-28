@@ -66,7 +66,7 @@ def actions(board):
             if board[i][j] == EMPTY:
                 possible_actions.add((i, j))
     
-    print(f"possible actions: {possible_actions}")
+    #print(f"possible actions: {possible_actions}")
     return possible_actions
 
 
@@ -78,19 +78,20 @@ def result(board, action):
     Returns the board that results from making move (i, j) on the board.
     """
     print(f"action: {action}")
-
+    if action is None:
+        raise ValueError("Action cannot be None")
     board_copy = copy.deepcopy(board)
     print(f"board: {board}")
     print(f"board_copy: {board_copy}")
-    #if the current move is an X then place an X on the board
+    # If the current move is an X then place an X on the board
     if player(board) == X:
-        board_copy[0][1] = X
+        board_copy[action[0]][action[1]] = X
         return board_copy
-    #if the current move is an O then place an O on the board
+    # If the current move is an O then place an O on the board
     elif player(board) == O:
-        board_copy[0][1] = O
+        board_copy[action[0]][action[1]] = O
         return board_copy
-    #else, raise an exception
+    # Else, raise an exception
     else:
         raise Exception("Invalid move")
 
@@ -182,5 +183,21 @@ def minimax(board):
         for action in actions(board):
             v = min(v, max_value(result(board, action)))
         return v
+
+    max_v = -math.inf
+    min_v = math.inf
+
+    for possible_actions in actions(board):
+        if player(board) == X:
+            if max_value(result(board, possible_actions)) > max_v:
+                max_v = max_value(result(board, possible_actions))
+                best_action = possible_actions
+        elif player(board) == O:
+            if min_value(result(board, possible_actions)) < min_v:
+                min_v = min_value(result(board, possible_actions))
+                best_action = possible_actions
+                
+    return best_action
+    
 
     #raise NotImplementedError
