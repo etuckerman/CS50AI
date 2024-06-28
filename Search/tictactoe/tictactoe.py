@@ -2,6 +2,7 @@
 Tic Tac Toe Player
 """
 
+import copy
 import math
 
 X = "X"
@@ -71,7 +72,9 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    board_copy = board.copy()
+    print(f"action: {action}")
+    
+    board_copy = copy.deepcopy(board)
     #if the current move is an X then place an X on the board
     if player(board) == X:
         board_copy[action[0]][action[1]] = X
@@ -155,33 +158,22 @@ def minimax(board):
     Returns the optimal action for the current player on the board.
     """
 
-    if terminal(board):
-        return None
-    
-    min_value = float("inf")
-    max_value = float("-inf")
-    best_action = None
+    #Max Value function
+    def max_value(board):
+        if terminal(board):
+            return utility(board)
+        v = -math.inf
+        for action in actions(board):
+            v = max(v, min_value(result(board, action)))
+        return v
 
+    #Min Value function
+    def min_value(board):
+        if terminal(board):
+            return utility(board)
+        v = math.inf
+        for action in actions(board):
+            v = min(v, max_value(result(board, action)))
+        return v
 
-    #if player is X then maximize the value
-    if player(board) == X:
-        while actions(board):
-            action = actions(board)
-            value = min_value
-            if value > max_value:
-                max_value = value
-                best_action = action
-        return best_action
-    
-    #if player is O then minimize the value
-    elif player(board) == O:
-        while actions(board):
-            action = actions(board)
-            value = max_value
-            if value < min_value:
-                min_value = value
-                best_action = action
-        return best_action
-
-
-    raise NotImplementedError
+    #raise NotImplementedError
