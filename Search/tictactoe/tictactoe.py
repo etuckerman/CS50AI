@@ -2,6 +2,8 @@
 Tic Tac Toe Player
 """
 
+# https://submit.cs50.io/check50/ca39412a8b1cedd9162d701288ce87ad2b154dd2
+
 import copy
 import math
 
@@ -28,7 +30,7 @@ def player(board):
     # return X
     # else it's O's turn
     # return O
-    
+
     x_count = 0
     o_count = 0
 
@@ -40,16 +42,15 @@ def player(board):
                 o_count += 1
 
     if x_count <= o_count:
-        #print(f"X's turn...")
+        # print(f"X's turn...")
         return X
     elif x_count > o_count:
-        #print(f"O's turn...")
+        # print(f"O's turn...")
         return O
     else:
         raise Exception("Invalid player")
 
-
-    #raise NotImplementedError
+    # raise NotImplementedError
 
 
 def actions(board):
@@ -65,33 +66,34 @@ def actions(board):
         for j in range(len(board[i])):
             if board[i][j] == EMPTY:
                 possible_actions.add((i, j))
-    
-    #print(f"possible actions: {possible_actions}")
+
+    # print(f"possible actions: {possible_actions}")
     return possible_actions
 
-
-    #raise NotImplementedError
+    # raise NotImplementedError
 
 
 def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    #print(f"action: {action}")
-    if action is None:
-        raise ValueError("Action cannot be None")
-    
     board_copy = copy.deepcopy(board)
     current_player = player(board)
-    
+
+    if action is None:
+        raise ValueError("Action cannot be None")
+
     if board_copy[action[0]][action[1]] is not EMPTY:
         raise ValueError("Invalid action: Cell is not empty")
-    
+
+    if action[0] < 0 or action[0] > 2 or action[1] < 0 or action[1] > 2:
+        raise ValueError("Action coordinates out of bounds")
+
+
     board_copy[action[0]][action[1]] = current_player
     return board_copy
 
-
-    #raise NotImplementedError
+    # raise NotImplementedError
 
 
 def winner(board):
@@ -110,18 +112,18 @@ def winner(board):
 
     if case1 or case2 or case3 or case4 or case5 or case6 or case7 or case8:
         if player(board) == X:
-            return O 
+            return O
         else:
             return X
     return None
-    #raise NotImplementedError
+    # raise NotImplementedError
 
 
 def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    #if max moves is 9 then game is over
+    # if max moves is 9 then game is over
     x_count = 0
     o_count = 0
     for i in range(len(board)):
@@ -137,8 +139,8 @@ def terminal(board):
         return True
     else:
         return False
-    
-    #raise NotImplementedError
+
+    # raise NotImplementedError
 
 
 def utility(board):
@@ -153,7 +155,7 @@ def utility(board):
     else:
         return 0
 
-    #raise NotImplementedError
+    # raise NotImplementedError
 
 
 def minimax(board):
@@ -161,7 +163,7 @@ def minimax(board):
     Returns the optimal action for the current player on the board.
     """
 
-    #Max Value function
+    # Max Value function
     def max_value(board):
         if terminal(board):
             return utility(board)
@@ -170,7 +172,7 @@ def minimax(board):
             v = max(v, min_value(result(board, action)))
         return v
 
-    #Min Value function
+    # Min Value function
     def min_value(board):
         if terminal(board):
             return utility(board)
@@ -178,12 +180,14 @@ def minimax(board):
         for action in actions(board):
             v = min(v, max_value(result(board, action)))
         return v
-    
+
+    best_action = None
+
     if terminal(board):
-            return utility(board)
+        return None
 
     current_player = player(board)
-    
+
     if current_player == O:
         min_v = math.inf
         for action in actions(board):
@@ -198,8 +202,7 @@ def minimax(board):
             if v > max_v:
                 max_v = v
                 best_action = action
-                
-    return best_action
-   
 
-    #raise NotImplementedError
+    return best_action
+
+    # raise NotImplementedError
