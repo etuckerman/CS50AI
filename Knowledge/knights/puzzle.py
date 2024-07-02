@@ -1,3 +1,5 @@
+# https://submit.cs50.io/check50/713fd495891c659e19990fb7b45ed80ead4b66a5
+
 from logic import *
 
 AKnight = Symbol("A is a Knight")
