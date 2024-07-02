@@ -53,6 +53,20 @@ knowledge2 = And(
     Or(BKnight, BKnave),
     Not(And(BKnight, BKnave)),
     
+    # If A is a knight,
+    # Then A and B are Knights or A and B are Knaves
+    Implication(AKnight, Or(And(AKnight, BKnight), And(AKnave, BKnave))),
+    
+    # If A is a knave,
+    # Then A is a knight and B is a knave or A is a knave and B is a knight
+    Implication(AKnave, Not(Or(And(AKnight, BKnight), And(AKnave, BKnave)))),
+    
+    # If B is a knight,
+    # Then A is a knight and B is a nave or A is a knave and B is a knight
+    Implication(BKnight, Or(And(AKnight, BKnave), And(AKnave, BKnight))),
+    # If B is a knave,
+    # Then A is a knight and B is a knight or A is a knave and B is a knave
+    Implication(BKnave, Not(Or(And(AKnight, BKnave), And(AKnave, BKnight))))
     
 )
 
