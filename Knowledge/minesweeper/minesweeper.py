@@ -294,11 +294,19 @@ class MinesweeperAI():
             2) are not known to be mines
         """
         
+        available_moves = set()
+        
         for i in range(self.height):
             for j in range(self.width):
                 cell = (i, j)
                 if cell not in self.moves_made and cell not in self.mines:
-                    return cell
+                    available_moves.add(cell)
+        
+        if len(available_moves) == 0:
+            return None
+        
+        return random.choice(list(available_moves))
+        
         
         
         #raise NotImplementedError
