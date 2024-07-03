@@ -193,6 +193,7 @@ class MinesweeperAI():
         to mark that cell as safe as well.
         """
         self.safes.add(cell)
+        
         for sentence in self.knowledge:
             sentence.mark_safe(cell)
 
@@ -214,15 +215,20 @@ class MinesweeperAI():
         
         #mark the cell as one of the moves made in the game.
         self.moves_made.add(cell)
+        print(f"self.moves_made, {self.moves_made}")
         
         #mark the cell as a safe cell,
         self.mark_safe(cell)
+        print(f"self.safes, {self.safes}")
         
+        
+        print(f"self.knowledge pre update:, {self.knowledge}")
         #updating any sentences that contain the cell as well.
         for sentence in self.knowledge:
             if cell in sentence.cells:
                 sentence.cells.remove(cell)
                 sentence.count -= 1 
+        print(f"self.knowledge post update:, {self.knowledge}")
         
         #add a new sentence to the AI’s knowledge base,
         # based on the value of cell and count,
@@ -231,20 +237,22 @@ class MinesweeperAI():
         # undetermined in the sentence.
         
         neighbors = set()
-        
-        for i in range(cell[0] - 1, cell[0] + 1):
-            for j in range(cell[1] - 1, cell[1] + 1):
-                if (i, j) not in (self.safes or self.mines):
+        print(f"neighbors, {neighbors}")
+        for i in range(cell[0] - 1, cell[0] + 2):
+            for j in range(cell[1] - 1, cell[1] + 2):
+                if (i, j) not in self.safes and (i, j) not in self.mines:
                     neighbors.add((i, j))
-        
+        print(f"neighbors, {neighbors}")
+
+        if neighbors:
+            new_sentence = Sentence(neighbors, count)
+            if new_sentence not in self.knowledge:
+                print(f"self.knowledge pre append, {self.knowledge}")
+                self.knowledge.append(new_sentence)
+                print(f"self.knowledge post append, {self.knowledge}")
+
         # if, based on any of the sentences in self.knowledge,
         # new cells can be marked as safe or as mines
-        for sentence in self.knowledge:
-            for cell in sentence.known_safes():
-                self.mark_safe(cell)
-            for cell in sentence.known_mines():
-                self.mark_mine(cell)
-        
         #If, based on any of the sentences in self.knowledge, 
         # new sentences can be inferred 
         # (using the subset method described in the Background),
@@ -253,13 +261,32 @@ class MinesweeperAI():
         # it may be possible to draw new inferences that weren’t possible before.
         # Be sure that those new inferences are added to the knowledge base 
         # if it is possible to do so.
+        made_inference = True
+        while made_inference:
+            made_inference = False
+            
+            for sentence in self.knowledge.copy():
+                for cell in sentence.known_safes():
+                    if cell not in self.safes:
+                        self.mark_safe(cell)
+                        made_inference = True
+                for cell in sentence.known_mines():
+                    if cell not in self.mines:
+                        self.mark_mine(cell)
+                        made_inference = True            
         
+
+        new_knowledge = []
         for set1 in self.knowledge:
             for set2 in self.knowledge:
                 if set1.cells.issubset(set2.cells):
                     new_cells = set2.cells - set1.cells
                     new_count = set2.count - set1.count
-                    self.knowledge.append(Sentence(new_cells, new_count))
+                    inferred_sentence = Sentence(new_cells, new_count)
+                    if inferred_sentence not in self.knowledge:
+                        new_knowledge.append(inferred_sentence)
+                        made_inference = True
+        self.knowledge += new_knowledge
 
         #raise NotImplementedError
 
@@ -280,7 +307,7 @@ class MinesweeperAI():
             if cell not in self.moves_made:
                 return cell
             
-        return None
+        #return None
         
         
         
