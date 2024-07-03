@@ -240,16 +240,14 @@ class MinesweeperAI():
         print(f"neighbors, {neighbors}")
         for i in range(cell[0] - 1, cell[0] + 2):
             for j in range(cell[1] - 1, cell[1] + 2):
-                if (i, j) not in self.safes and (i, j) not in self.mines:
+                if (i, j) not in self.safes and (i, j) not in self.mines and 0 <= i < self.height and 0 <= j < self.width:
                     neighbors.add((i, j))
         print(f"neighbors, {neighbors}")
 
         if neighbors:
             new_sentence = Sentence(neighbors, count)
             if new_sentence not in self.knowledge:
-                print(f"self.knowledge pre append, {self.knowledge}")
                 self.knowledge.append(new_sentence)
-                print(f"self.knowledge post append, {self.knowledge}")
 
         # if, based on any of the sentences in self.knowledge,
         # new cells can be marked as safe or as mines
