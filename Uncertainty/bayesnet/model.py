@@ -1,5 +1,5 @@
 from pomegranate import *
-
+from pomegranate import Node
 # Rain node has no parents
 rain = Node(DiscreteDistribution({
     "none": 0.7,
