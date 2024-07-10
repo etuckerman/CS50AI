@@ -1,4 +1,5 @@
 from pomegranate import *
+from pomegranate import numpy
 
 # Observation model for each state
 sun = DiscreteDistribution({

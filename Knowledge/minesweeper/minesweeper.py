@@ -227,13 +227,13 @@ class MinesweeperAI():
         # print(f"Safes: {self.safes}")
         # print(f"Mines: {self.mines}")
         
-                # Step 1: Mark the cell as a move that has been made
+        # Mark the cell as a move that has been made
         self.moves_made.add(cell)
 
-        # Step 2: Mark the cell as safe
+        # Mark the cell as safe
         self.mark_safe(cell)
 
-        # Step 3: Add a new sentence to the AI's knowledge base
+        # Add a new sentence to the AI's knowledge base
         new_cells = set()
         for i in range(cell[0] - 1, cell[0] + 2):
             for j in range(cell[1] - 1, cell[1] + 2):
@@ -249,7 +249,7 @@ class MinesweeperAI():
             if new_sentence not in self.knowledge:
                 self.knowledge.append(new_sentence)
 
-        # Step 4: Mark any additional cells as safe or as mines based on the AI's knowledge base
+        # Mark any additional cells as safe or as mines based on the AI's knowledge base
         made_inference = True
         while made_inference:
             made_inference = False
@@ -263,7 +263,7 @@ class MinesweeperAI():
                         self.mark_mine(cell)
                         made_inference = True
 
-        # Step 5: Add any new sentences to the AI's knowledge base if they can be inferred from existing knowledge
+        # Add any new sentences to the AI's knowledge base if they can be inferred from existing knowledge
         new_knowledge = []
         for set1 in self.knowledge:
             for set2 in self.knowledge:
