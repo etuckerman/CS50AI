@@ -144,17 +144,22 @@ def iterate_pagerank(corpus, damping_factor):
     # i ranges over all pages that link to page p, 
     i = 0
     # and NumLinks(i) is the number of links present on page i.
-    NumLinks(i) = 
+    #num_links = NumLinks(i)
     
     #start by assuming the PageRank of every page is 1 / N
     for page in corpus:
         pr_values[page] = 1 / len(corpus)
     
+    #the sigma part of the equation
+    #range over all pages that link to page p
+    for i in corpus[page.values]:
+        sum = (pr_values[i]) / (NumLinks(i))
     
+    pr_values[page] = ((1 - d)/(N)) + (d * (sum))
     
     #PageRank values should sum to 1.
     assert sum(pr_values.values()) == 1, "Sum of pr values is not 1"
-    raise NotImplementedError
+    return pr_values
 
 def NumLinks(i, corpus):
     if i >= 0 and corpus:
