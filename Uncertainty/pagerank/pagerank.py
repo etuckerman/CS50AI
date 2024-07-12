@@ -60,7 +60,7 @@ def transition_model(corpus, page, damping_factor):
     
     pd_dict = dict()
     page_count = len(corpus)
-    
+    non_self_page_count = len(corpus[page])
     #if page has no branches
     if len(corpus[page]) <= 0:
         #return a pd that chooses randomely among all pages with equal probability
@@ -69,19 +69,35 @@ def transition_model(corpus, page, damping_factor):
             pd_dict[page] = (1 / len(corpus))
             return pd_dict
     
-    for key in corpus:
-        if key is page:
-            pd_dict[key] = 0
-        if key is not page:
-            #add pages that are not linked to by the current page with a chance of 1-damp/n-1
-            pd_dict[key] = ((1 - damping_factor) / (page_count - 1))
-    #for page in corpus:
-        #add pages that are linked to by the current page with a chance of damp/n
-            pd_dict[key] += (damping_factor / len(corpus[page]))
+    #vvvvv rework function for values in corpus[page]
+    # for key in corpus:
+    #     if key is page:
+    #         pd_dict[key] = 0
+    #     if key is not page:
+    #         #add pages that are not linked to by the current page with a chance of 1-damp/n-1
+    #         pd_dict[key] = ((1 - damping_factor) / (page_count - 1))
+    #         print(pd_dict[key], "pd_dict[key] after key is not page")
+    # #for page in corpus:
+    #     #add pages that are linked to by the current page with a chance of damp/n
+    #         pd_dict[key] += (damping_factor / (page_count - 1))
+    #         print(pd_dict[key], "pd_dict[key] after AFTER key is not page")
     
+    #initialize the dict to have values of 0
+    for pages in corpus:
+        pd_dict[pages] = 0
+        
+    for link in corpus[page]:
+        #add pages that are not linked to by the current page with a chance of 1-damp/n-1
+        pd_dict[link] += ((1 - damping_factor) / (non_self_page_count))
+        print(pd_dict[link], "pd_dict[key] after key is not page")
+        
+        pd_dict[link] += (damping_factor / (non_self_page_count))
+        print(pd_dict[link], "pd_dict[key] after AFTER key is not page")
+
+        
     
     assert sum(pd_dict.values()) == 1, "Sum of pd values is not 1"
-    print(pd_dict)
+    print("pd_dict =", pd_dict)
     return pd_dict
     #assert that the sum of the probabilities is 1
     #return dict with key as page and value as probability of visiting that page
