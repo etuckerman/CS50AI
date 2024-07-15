@@ -165,30 +165,67 @@ def iterate_pagerank(corpus, damping_factor):
     PageRank values should sum to 1.
     """
     pr_values = dict()
-    
+    tolerance = 0.001
     
     #d is the damping factor, 
     d = damping_factor
     # N is the total number of pages in the corpus,
     N = len(corpus)
     # i ranges over all pages that link to page p, 
-    i = 0
+    #i = 0
     # and NumLinks(i) is the number of links present on page i.
     #num_links = NumLinks(i)
     
-    #start by assuming the PageRank of every page is 1 / N
+    # Initialize PageRank values to 1 / N for all pages
     for page in corpus:
-        pr_values[page] = 1 / len(corpus)
+        pr_values[page] = 1 / N
+    print(pr_values, "pr_values initialized")
     
-    #the sigma part of the equation
-    #range over all pages that link to page p
-    sum = 0
-    for i in corpus[page]:
-        sum += (pr_values[i]) / (NumLinks(i, corpus))
+         # Iterate until < 0.001 diff
+    while True:
+        new_pr_values = {}
+         # loop over all pages
+        for page in corpus:
+            # Calculate the new PageRank value for `page`
+            sum_rank = 0
+            # Loop over all pages that link to the current page
+            for linking_page in corpus:
+                # Check if the linking page has a link to the current page
+                if page in corpus[linking_page]:
+                    # Calculate the sum of the PageRank values of all pages that link
+                    sum_rank += pr_values[linking_page] / NumLinks(linking_page, corpus)
+            # Update the PageRank value based on the formula
+            new_pr_values[page] = (1 - d) / N + d * sum_rank
+        
+        # Check for difference
+        diff = sum(abs(new_pr_values[page] - pr_values[page]) for page in corpus)
+        if diff < tolerance:
+            break
+        
+        # Update the PageRank values
+        pr_values = new_pr_values
+        print(pr_values, "updated pr_values")
+
+    # Ensure PageRank values sum to 1
+    norm_factor = sum(pr_values.values())
+    for page in pr_values:
+        pr_values[page] /= norm_factor
+
+    print(pr_values, "final pr_values")
+    return pr_values
+        
     
-    print(((1 - d)/(N)) + (d * (sum)), "equation")
     
-    pr_values[page] = ((1 - d)/(N)) + (d * (sum))
+    
+    # #the sigma part of the equation
+    # #range over all pages that link to page p
+    # for i in corpus[page]:
+    #     sum = 0
+    #     sum += (pr_values[i]) / (NumLinks(i, corpus))
+    
+    #     print(((1 - d)/(N)) + (d * (sum)), "equation")
+    
+    #     pr_values[page] = ((1 - d)/(N)) + (d * (sum))
     
     #PageRank values should sum to 1.
     print(pr_values, "pr_values!!!!!!!!!!!!!!!!!!!!!!!!!!!")
