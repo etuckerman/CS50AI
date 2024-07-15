@@ -97,8 +97,9 @@ def transition_model(corpus, page, damping_factor):
 
     # Ensure PageRank values sum to 1
     norm_factor = sum(pd_dict.values())
-    for page in pd_dict:
-            pd_dict[page] /= norm_factor
+    if norm_factor > 0:
+        for page in pd_dict:
+                pd_dict[page] /= norm_factor
 
     return pd_dict
     #assert that the sum of the probabilities is 1
