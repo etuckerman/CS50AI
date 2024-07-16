@@ -60,14 +60,15 @@ def transition_model(corpus, page, damping_factor):
     pd_dict = dict()
    
     #print(f"Type of page: {type(page)}, Value of page: {page}")
-    non_self_page_count = len(corpus[page])
-    #if page has no branches
-    if len(corpus[page]) <= 0:
+    page_count = len(corpus)
+    link_count = len(corpus[page])
+    #if page has no links
+    if link_count == 0:
         #return a pd that chooses randomely among all pages with equal probability
         for page in corpus:
             #add equal probability to all pages
-            pd_dict[page] = (1 / len(corpus))
-            return pd_dict
+            pd_dict[page] = (1 / page_count)
+            #return pd_dict
 
     #vvvvv rework function for values in corpus[page]
     # for key in corpus:
@@ -87,17 +88,19 @@ def transition_model(corpus, page, damping_factor):
         pd_dict[pages] = 0
 
     for link in corpus[page]:
-        #add pages that are not linked to by the current page with a chance of 1-damp/n-1
-        pd_dict[link] += ((1 - damping_factor) / (non_self_page_count))
+        
+        if link_count == 0:
+            #add pages that are not linked to by the current page with a chance of 1-damp/n
+            pd_dict[link] = ((1 - damping_factor) / (page_count))
         #print(pd_dict[link], "pd_dict[key] after key is not page")
 
-        pd_dict[link] += (damping_factor / (non_self_page_count))
+        pd_dict[link] += (damping_factor / (link_count))
         #print(pd_dict[link], "pd_dict[key] after AFTER key is not page")
 
 
     # Ensure PageRank values sum to 1
     norm_factor = sum(pd_dict.values())
-    if norm_factor > 0:
+    if norm_factor != 0:
         for page in pd_dict:
                 pd_dict[page] /= norm_factor
 
@@ -143,7 +146,11 @@ def sample_pagerank(corpus, damping_factor, n):
         #pick a random page based on the pd values !!!
         # k=1 ensures only one element is chosen from the list returned by random.choices
         # [0] accesses that single element from the resulting list.
-        page = random.choices(list(pd.keys()), list(pd.values()), k=1)[0]
+        if corpus[page]:
+            page = random.choices(list(pd.keys()), list(pd.values()), k=1)[0]
+        else:
+            # pretend it has links to all pages in the corpus including itself
+            page = random.choices(list(corpus.keys()), k=1)[0]
         #print(f"Next page: {page}")
 
         #decrement n
