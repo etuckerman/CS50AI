@@ -58,6 +58,8 @@ def transition_model(corpus, page, damping_factor):
     a link at random chosen from all pages in the corpus.
     """
     pd_dict = dict()
+    for pages in corpus:
+        pd_dict[pages] = 0
    
     #print(f"Type of page: {type(page)}, Value of page: {page}")
     page_count = len(corpus)
@@ -71,18 +73,23 @@ def transition_model(corpus, page, damping_factor):
             #return pd_dict
 
 
-    for pages in corpus:
-        pd_dict[pages] = 0
+    #for pages in corpus:
+       # pd_dict[pages] = 0
+    else:
+        for page in corpus:
+            for link in corpus[page]:
+                #add pages that are linked to by the current page with a chance of damping_factor/n
+                pd_dict[link] += (damping_factor / (link_count))
+                print(pd_dict[link], "pd_dict[key] after AFTER key is not page")
+            
+                
+        for other_page in corpus:
+            if other_page not in corpus[page]:
+                pd_dict[other_page] += (1 - damping_factor) / page_count
+                print(pd_dict[other_page], f"pd_dict[{other_page}] after adding random surfer part")
+    
 
-    for link in corpus[page]:
-        
-        #if link_count == 0:
-            #add pages that are not linked to by the current page with a chance of 1-damp/n
-        pd_dict[link] = ((1 - damping_factor) / (page_count))
-        #print(pd_dict[link], "pd_dict[key] after key is not page")
 
-        pd_dict[link] += (damping_factor / (link_count))
-        #print(pd_dict[link], "pd_dict[key] after AFTER key is not page")
 
 
     # Ensure PageRank values sum to 1
@@ -90,6 +97,9 @@ def transition_model(corpus, page, damping_factor):
     if norm_factor != 0:
         for page in pd_dict:
                 pd_dict[page] /= norm_factor
+
+    # Debugging: Print the probability distribution
+    print(f"Transition model for page {page}: {pd_dict}")
 
     return pd_dict
     #assert that the sum of the probabilities is 1
@@ -129,7 +139,7 @@ def sample_pagerank(corpus, damping_factor, n):
         # along with the corpus and the damping_factor,
         # to get the probabilities for the next sample
         pd = transition_model(corpus, current_page, damping_factor)
-        #print(pd, "pd")
+        print(pd, "pd")
 
 
 
@@ -155,9 +165,9 @@ def sample_pagerank(corpus, damping_factor, n):
     for page in pr_dict:
         pr_dict[page] /= norm_factor
         
-    # Debugging output to check if the sum of PageRank values is 1
-    print(f"Sum of PageRank values after normalization: {sum(pr_dict.values())}")
-
+    # Debugging: Print the final PageRank values
+    print(f"Final PageRank values (sampling): {pr_dict}")
+    
     return pr_dict
 
 def iterate_pagerank(corpus, damping_factor):
@@ -247,3 +257,4 @@ def NumLinks(i, corpus):
 
 if __name__ == "__main__":
     main()
+    
