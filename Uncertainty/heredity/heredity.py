@@ -139,51 +139,35 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         * everyone in set `have_trait` has the trait, and
         * everyone not in set` have_trait` does not have the trait.
     """
+    probability = 1
     
-    #create a dict for the total probability
-    #split into gene and trait
-    joint_prob = {}
     for person in people:
-        joint_prob[person] = {
-            "gene": 0,
-            "trait": 0
-        }
-    print(people, "people")
-    print(one_gene, "one_gene")
-    print(two_genes, "two_genes")
-    print(have_trait, "have_trait")
-    gene_prob = 1
-    trait_prob = 1
+        gene_count = (1 if person in one_gene else
+                      2 if person in two_genes else 0)
+        has_trait = person in have_trait
 
-    for person in people:
         mother = people[person]["mother"]
         father = people[person]["father"]
-        gene_count = 1 if person in one_gene else 2 if person in two_genes else 0
-        trait = True if person in have_trait else False
-        
-        # Calculate gene probability
+
         if mother is None and father is None:
-            gene_prob *= PROBS["gene"][gene_count]
+            gene_prob = PROBS["gene"][gene_count]
         else:
-            # Probability based on parents' genes
-            probabilities_from_mother = get_parent_probability(mother, one_gene, two_genes)
-            probabilities_from_father = get_parent_probability(father, one_gene, two_genes)
+            mother_probs = get_parent_probability(mother, one_gene, two_genes)
+            father_probs = get_parent_probability(father, one_gene, two_genes)
 
-            if gene_count == 2:
-                gene_prob *= probabilities_from_mother[1] * probabilities_from_father[1]
+            if gene_count == 0:
+                gene_prob = mother_probs[0] * father_probs[0]
             elif gene_count == 1:
-                gene_prob *= (
-                    probabilities_from_mother[1] * probabilities_from_father[0] +
-                    probabilities_from_mother[0] * probabilities_from_father[1]
-                )
-            else:
-                gene_prob *= probabilities_from_mother[0] * probabilities_from_father[0]
-        
-        # Calculate trait probability
-        trait_prob *= PROBS["trait"][gene_count][trait]
+                gene_prob = (mother_probs[0] * father_probs[1] +
+                             mother_probs[1] * father_probs[0])
+            elif gene_count == 2:
+                gene_prob = mother_probs[1] * father_probs[1]
 
-    joint_prob = gene_prob * trait_prob
-    return joint_prob
+        trait_prob = PROBS["trait"][gene_count][has_trait]
+
+        probability *= gene_prob * trait_prob
+
+    return probability
 
 def get_parent_probability(parent, one_gene, two_genes):
     """
@@ -216,13 +200,8 @@ def update(probabilities, one_gene, two_genes, have_trait, p):
         trait = True if person in have_trait else False
         # Update the probabilities[person]["gene"] distribution
         probabilities[person]["gene"][gene_count] += p
-        
-        if trait:
-            # Update the probabilities[person]["trait"] distribution
-            probabilities[person]["trait"][trait] += p
-        else:
-            #update for no trait
-            probabilities[person]["trait"][trait] += 1 - p
+        probabilities[person]["trait"][trait] += p
+
     
     # raise NotImplementedError
 
@@ -233,19 +212,48 @@ def normalize(probabilities):
     is normalized (i.e., sums to 1, with relative proportions the same).
     """
     
+    # Normalize the probability distributions for each person
     for person in probabilities:
         print(f"person: {person}", probabilities[person])
+        
+        # Calculate the sum of probabilities for the gene distribution
         gene_factor = sum(probabilities[person]["gene"].values())
+        # Calculate the sum of probabilities for the trait distribution
         trait_factor = sum(probabilities[person]["trait"].values())
+        
         print(f"gene_factor: {gene_factor}")
         print(f"trait_factor: {trait_factor}")
+        
+        # Check if the gene_factor is 0, which means no gene probabilities
+        if gene_factor == 0:
+            print(f"Warning: gene_factor for {person} is 0. Skipping normalization for genes.")
+        # Check if the trait_factor is 0, which means no trait probabilities
+        if trait_factor == 0:
+            print(f"Warning: trait_factor for {person} is 0. Skipping normalization for traits.")
+        
+        # Normalize the gene distribution probabilities
         for gene_number in probabilities[person]["gene"]:
-            probabilities[person]["gene"][gene_number] /= gene_factor
+            if gene_factor != 0:
+                probabilities[person]["gene"][gene_number] /= gene_factor
+            else:
+                probabilities[person]["gene"][gene_number] = 0
+        
+        # Normalize the trait distribution probabilities
         for trait_value in probabilities[person]["trait"]:
             if trait_factor != 0:
                 probabilities[person]["trait"][trait_value] /= trait_factor
+            else:
+                probabilities[person]["trait"][trait_value] = 0
     
-    #raise NotImplementedError
+    # Ensure that the sum of each distribution is exactly 1 after normalization
+    for person in probabilities:
+        gene_total = sum(probabilities[person]["gene"].values())
+        trait_total = sum(probabilities[person]["trait"].values())
+        
+        # Check if the sum of gene probabilities is approximately 1
+        assert abs(gene_total - 1.0) < 1e-9, f"Normalization error in genes for {person}: {gene_total}"
+        # Check if the sum of trait probabilities is approximately 1
+        assert abs(trait_total - 1.0) < 1e-9, f"Normalization error in traits for {person}: {trait_total}"
 
 
 if __name__ == "__main__":
