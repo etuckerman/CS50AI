@@ -174,6 +174,29 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         if trait is not None:
             trait_prob *= PROBS["trait"][gene_count][trait]
 
+        #For anyone with no parents listed in the data set,
+        if mother and father == None:
+        #     #use the probability distribution PROBS["gene"] 
+        #     # to determine the probability that they have a 
+        #     # particular number of the gene.
+            gene_prob *= PROBS["gene"][gene_count]
+        
+        #For anyone with parents in the data set
+        else:
+        #     #each parent will pass one of their 
+        #     # two genes on to their child randomly
+            if mother and father in two_genes:
+                gene_prob *= 1
+            elif mother in two_genes:
+                gene_prob *= 0.5
+            elif father in two_genes:
+                gene_prob *= 0.5
+            gene_prob *= PROBS["mutation"]
+                
+        #     if mother and father in two_genes:
+        #         #there is a PROBS["mutation"] chance that it mutates
+        #         joint_prob[person]["gene"] += PROBS["mutation"]
+        
         
         for person in people:
             joint_prob[person] = {
@@ -248,12 +271,16 @@ def normalize(probabilities):
     """
     
     for person in probabilities:
-        gene_factor = sum(probabilities[person]["gene"])
-        trait_factor = sum(probabilities[person]["trait"])
+        print(f"person: {person}", probabilities[person])
+        gene_factor = sum(probabilities[person]["gene"].values())
+        trait_factor = sum(probabilities[person]["trait"].values())
+        print(f"gene_factor: {gene_factor}")
+        print(f"trait_factor: {trait_factor}")
         for gene_number in probabilities[person]["gene"]:
             probabilities[person]["gene"][gene_number] /= gene_factor
         for trait_value in probabilities[person]["trait"]:
-            probabilities[person]["trait"][trait_value] /= trait_factor
+            if trait_factor != 0:
+                probabilities[person]["trait"][trait_value] /= trait_factor
     
     #raise NotImplementedError
 
