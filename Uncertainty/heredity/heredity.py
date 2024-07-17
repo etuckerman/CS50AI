@@ -180,6 +180,7 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         #     # to determine the probability that they have a 
         #     # particular number of the gene.
             gene_prob *= PROBS["gene"][gene_count]
+            trait_prob *= PROBS["trait"][trait]
         
         #For anyone with parents in the data set
         else:
@@ -197,12 +198,13 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         #         #there is a PROBS["mutation"] chance that it mutates
         #         joint_prob[person]["gene"] += PROBS["mutation"]
         
+        print(f"{person}'s gene probability: {gene_prob}")
+        print(f"{person}'s trait probability: {trait_prob}")
         
-        for person in people:
-            joint_prob[person] = {
-                "gene": gene_prob,
-                "trait": trait_prob
-            }
+        joint_prob[person] = {
+            "gene": gene_prob,
+            "trait": trait_prob
+        }
     
     print(f"joint_prob: {joint_prob}")
     return joint_prob
@@ -249,19 +251,21 @@ def update(probabilities, one_gene, two_genes, have_trait, p):
     Which value for each distribution is updated depends on whether
     the person is in `have_gene` and `have_trait`, respectively.
     """
-    #For each person in probabilities
+    # For each person in probabilities
     for person in probabilities:
         gene_count = 1 if person in one_gene else 2 if person in two_genes else 0
         trait = True if person in have_trait else False
-        # update the probabilities[person]["gene"] distribution
+        # Update the probabilities[person]["gene"] distribution
         probabilities[person]["gene"][gene_count] += p[person]["gene"]
         
         if trait:
-            #and probabilities[person]["trait"] distribution
+            # Update the probabilities[person]["trait"] distribution
             probabilities[person]["trait"][trait] += p[person]["trait"]
+        else:
+            #update for no trait
+            probabilities[person]["trait"][trait] += 1 - p[person]["trait"]
     
-    
-    #raise NotImplementedError
+    # raise NotImplementedError
 
 
 def normalize(probabilities):
