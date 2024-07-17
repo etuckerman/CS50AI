@@ -198,7 +198,7 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         #compute the probability that a person does or does 
         # not have a particular trait.
         else:
-            total_prob[person] += PROBS["trait"][True]
+            total_prob[person] += PROBS["trait"][gene_count][True]
         
             
     
