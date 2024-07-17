@@ -142,6 +142,8 @@ def joint_probability(people, one_gene, two_genes, have_trait):
     
     #create a dict for the total probability
     total_prob = {}
+    for person in people:
+        total_prob[person] = 0
     
     #create set for people who have no gene
     no_gene = set()
@@ -160,17 +162,16 @@ def joint_probability(people, one_gene, two_genes, have_trait):
     for person in people:
         mother = people[person]["mother"]
         father = people[person]["father"]
+        gene_count = 1 if person in one_gene else 2 if person in two_genes else 0
+        trait = people[person]["trait"]
+        
         print(f"{person}'s mother is {mother}")
         print(f"{person}'s father is {father}")
+        print(f"{person} has {gene_count} gene(s)")
+        print(f"{person} has trait: {trait}")
         
-        #everyone in set `one_gene` has one copy of the gene
-        if person in one_gene:
-            total_prob[person] += PROBS["gene"][1]
-        #everyone in set `two_genes` has two copies of the gene
-        elif person in two_genes:
-            total_prob[person] += PROBS["gene"][2]
-        else:
-            total_prob[person] += PROBS["gene"][0]
+        # Update total probability based on gene count
+        total_prob[person] += PROBS["gene"][gene_count]
         
         #unconditional probability distribution
         #For anyone with no parents listed in the data set,
@@ -184,29 +185,20 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         else:
             #each parent will pass one of their 
             # two genes on to their child randomly
+            #TODO^
             
+            #there is a PROBS["mutation"] chance that it mutates
+            total_prob[person] += PROBS["mutation"]
         
         #conditional probability distribution
         if person not in have_trait:
-            if person in one_gene:
-                total_prob[person] += PROBS["trait"][1]
-            elif person in two_genes:
-                total_prob[person] += PROBS["trait"][2]
-            else:
-                total_prob[person] += PROBS["trait"][0]
+            total_prob[person] += PROBS["trait"][gene_count][False]
+
         
-        if 
-            
-        
-        
-        
-        #if both mother and father have no trait
-        if people[mother]["trait"] and people[father]["trait"] == True:
-            no_trait.add(person)
-        
-        
-        #if both mother and father have no gene
-        if people[mother][""]
+        #compute the probability that a person does or does 
+        # not have a particular trait.
+        else:
+            total_prob[person] += PROBS["trait"][True]
         
             
     
