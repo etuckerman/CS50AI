@@ -144,6 +144,11 @@ def joint_probability(people, one_gene, two_genes, have_trait):
     for person in people:
         mother = people[person]["mother"]
         father = people[person]["father"]
+        
+        if person in have_trait:
+            has_trait = True
+        else:
+            has_trait = False
 
         # Determine the gene count for the current person
         if person in two_genes:
@@ -183,10 +188,14 @@ def joint_probability(people, one_gene, two_genes, have_trait):
                 gene_prob = (1 - mother_prob) * (1 - father_prob)
 
         # Determine the trait probability for the current person
-        trait_prob = PROBS["trait"][gene_count][person in have_trait]
+        trait_prob = PROBS["trait"][gene_count][has_trait]
         
         # Multiply the gene and trait probabilities to get the joint probability
         probability *= gene_prob * trait_prob
+        
+        if person == "Harry":  # Add a debug statement for Harry
+            print(f"Harry - Gene Count: {gene_count}, Gene Prob: {gene_prob}, Trait Prob: {trait_prob}, Combined Prob: {probability}")
+
 
     return probability
     
@@ -291,18 +300,13 @@ def update(probabilities, one_gene, two_genes, have_trait, p):
     # For each person in probabilities
     for person in probabilities:
         gene_count = 1 if person in one_gene else 2 if person in two_genes else 0
-        trait = True if person in have_trait else False
+        has_trait = True if person in have_trait else False
         # Update the probabilities[person]["gene"] distribution
         probabilities[person]["gene"][gene_count] += p#[person]["gene"]
 
-        if trait:
-            # Update the probabilities[person]["trait"] distribution
-            probabilities[person]["trait"][trait] += p#[person]["trait"]
-        else:
-            #update for no trait
-            probabilities[person]["trait"][trait] += 1 - p#[person]["trait"]
-
-    # raise NotImplementedError
+        # Update the probabilities[person]["trait"] distribution
+        probabilities[person]["trait"][has_trait] += p#[person]["trait"]
+        
 
 
 def normalize(probabilities):
