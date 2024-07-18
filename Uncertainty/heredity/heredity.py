@@ -170,7 +170,7 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         #everyone in set `two_genes` has two copies of the gene, and
         #everyone not in `one_gene` or `two_gene` does not have the gene
         gene_prob *= PROBS["gene"][gene_count]
-        
+         
         if trait is not None:
             trait_prob *= PROBS["trait"][gene_count][trait]
 
@@ -206,8 +206,11 @@ def joint_probability(people, one_gene, two_genes, have_trait):
             "trait": trait_prob
         }
     
+    sum_join_prob = gene_prob * trait_prob
+    
     print(f"joint_prob: {joint_prob}")
-    return joint_prob
+    print(f"sum_join_prob", sum_join_prob)
+    return sum_join_prob
         # # Update total probability based on gene count
         # joint_prob[person]["gene"] += PROBS["gene"][gene_count]
         
@@ -256,14 +259,14 @@ def update(probabilities, one_gene, two_genes, have_trait, p):
         gene_count = 1 if person in one_gene else 2 if person in two_genes else 0
         trait = True if person in have_trait else False
         # Update the probabilities[person]["gene"] distribution
-        probabilities[person]["gene"][gene_count] += p[person]["gene"]
+        probabilities[person]["gene"][gene_count] += p#[person]["gene"]
         
         if trait:
             # Update the probabilities[person]["trait"] distribution
-            probabilities[person]["trait"][trait] += p[person]["trait"]
+            probabilities[person]["trait"][trait] += p#[person]["trait"]
         else:
             #update for no trait
-            probabilities[person]["trait"][trait] += 1 - p[person]["trait"]
+            probabilities[person]["trait"][trait] += 1 - p#[person]["trait"]
     
     # raise NotImplementedError
 
