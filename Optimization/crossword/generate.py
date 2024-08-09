@@ -138,21 +138,61 @@ class CrosswordCreator():
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
-        raise NotImplementedError
+        
+        print(f"arcs: {arcs}")
+        if arcs is None:
+            #begin an initial queue of all of the arcs in the problem
+            arcs = []
+            for x in self.domains:
+                for y in self.domains:
+                    if x != y:
+                        arcs.append((x, y))
+        else:
+            #begin with initial queue of only the arcs that are in `arcs`
+            #each arc is a tuple, (x, y) of a variable x and a different var y
+            arcs = arcs.copy()
+            
+        #loop through the arcs and remove the non consistent ones
+        for arc in arcs:
+            if self.revise(arc) == False:
+                arcs.remove(arc)
+            
+        #
+        if arcs is None:
+            return False
+        else:
+            return True
+        #raise NotImplementedError
 
     def assignment_complete(self, assignment):
         """
         Return True if `assignment` is complete (i.e., assigns a value to each
         crossword variable); return False otherwise.
         """
-        raise NotImplementedError
+        
+        #check if all variables have been assigned a value
+        if len(assignment) == len(self.crossword.variables):
+            return True
+        else:
+            return False
+        
+        
+        #raise NotImplementedError
 
     def consistent(self, assignment):
         """
         Return True if `assignment` is consistent (i.e., words fit in crossword
         puzzle without conflicting characters); return False otherwise.
         """
-        raise NotImplementedError
+        
+        #check if variable is unique
+        if len(assignment) != len(set(assignment)):
+            return False
+        
+        #check if all words are the correct length
+        for variable in assignment:
+            if len(variable) != len(assignment[variable]):
+                return False
 
     def order_domain_values(self, var, assignment):
         """
