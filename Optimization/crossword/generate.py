@@ -100,9 +100,11 @@ class CrosswordCreator():
          constraints; in this case, the length of the word.)
         """
         for variable in self.domains:
-            for value in variable:
-                if len(variable) != len(value):
-                    self.domains[variable].remove[value]
+            #update the domain of each variable to remove any values that do not have the correct length
+            self.domains[variable] = {
+            value for value in self.domains[variable]
+            if len(value) == variable.length
+        }
         
         
         #raise NotImplementedError
@@ -118,13 +120,14 @@ class CrosswordCreator():
         """
         
         revision = False
-        
-        for value_x in self.domains[x]:
-            if value_x not in self.crossword.overlaps[x, y]:
-                self.domains[x].remove[value_x]
-                revision = True
+        if self.crossword.overlaps[x, y] is not None:
+            self.domains[x] = {
             
-        
+            value_x for value_x in self.domains[x]
+                if value_x not in self.crossword.overlaps[x, y]
+            }
+            revision = True
+            
         return revision
         
         #raise NotImplementedError
@@ -154,7 +157,7 @@ class CrosswordCreator():
             
         #loop through the arcs and remove the non consistent ones
         for arc in arcs:
-            if self.revise(arc) == False:
+            if self.revise(arc[0], arc[1]) == False:
                 arcs.remove(arc)
             
         #
@@ -272,12 +275,24 @@ class CrosswordCreator():
         """
         Using Backtracking Search, take as input a partial assignment for the
         crossword and return a complete assignment if possible to do so.
-
+        
         `assignment` is a mapping from variables (keys) to words (values).
 
         If no assignment is possible, return None.
         """
-        raise NotImplementedError
+        
+        if self.assignment_complete(assignment) == True:
+            return assignment
+        else:
+            for variable in assignment:
+                if variable.value is None:
+                    for value in self.domains[variable]:
+                        variable.value = self.solve(value)
+            
+ 
+ 
+            
+#        raise NotImplementedError
 
 
 def main():
