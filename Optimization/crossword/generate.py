@@ -188,23 +188,21 @@ class CrosswordCreator():
         puzzle without conflicting characters); return False otherwise.
         """
         
-        #check if variable is unique
+         # Check if all variables are unique
         if len(assignment) != len(set(assignment)):
             return False
         
-        #check if all words are the correct length
+        # Check if all words are the correct length
         for variable in assignment:
-            for value in variable:
-                if len(value) != variable.length:
-                    return False
+            value = assignment[variable]
+            if len(value) != variable.length:
+                return False
         
-        
-        
-        #no conflicts between neighboring variables
+        # Check for no conflicts between neighboring variables
         for x in assignment:
             for y in assignment:
                 if x != y:
-                    overlap = self.crossword.overlaps[x, y]
+                    overlap = self.crossword.overlaps.get((x, y), None)
                     if overlap is not None:
                         i, j = overlap
                         if assignment[x][i] != assignment[y][j]:
@@ -219,37 +217,40 @@ class CrosswordCreator():
         The first value in the list, for example, should be the one
         that rules out the fewest values among the neighbors of `var`.
         """
-        
+        print(f"Type of var: {type(var)}")
+        print(f"Type of self.domains: {type(self.domains)}")
+        print(f"Keys in self.domains: {self.domains.keys()}")
+
         # Create a dictionary to store the constraint count for each value
         constraint_count = {}
 
         # Iterate over each value in the domain of the variable
         for value in self.domains[var]:
-            count = 0
-            # Iterate over each neighbor of the variable
-            for neighbor in self.crossword.neighbors(var):
-                # Skip neighbors that are already assigned
-                if neighbor in assignment:
-                    continue
-                
-                # Check if there is an overlap between the variable and its neighbor
-                overlap = self.crossword.overlaps.get((var, neighbor), None)
-                if overlap is None:
-                    continue
+                count = 0
+                # Iterate over each neighbor of the variable
+                for neighbor in self.crossword.neighbors(var):
+                    # Skip neighbors that are already assigned
+                    if neighbor in assignment:
+                        continue
+                    
+                    # Check if there is an overlap between the variable and its neighbor
+                    overlap = self.crossword.overlaps.get((var, neighbor), None)
+                    if overlap is None:
+                        continue
 
-                # If there is an overlap, determine the position of the overlap
-                i, j = overlap
+                    # If there is an overlap, determine the position of the overlap
+                    i, j = overlap
+                    
+                    # Check if assigning the current value to var conflicts with the neighbor's value
+                    for neighbor_value in self.domains[neighbor]:
+                        # If the neighbor's value conflicts with the current value, increment the count
+                        if len(neighbor_value) > j and len(value) > i and neighbor_value[j] == value[i]:
+                            count += 1
+                            break
                 
-                # Check if assigning the current value to var conflicts with the neighbor's value
-                for neighbor_value in self.domains[neighbor]:
-                    # If the neighbor's value conflicts with the current value, increment the count
-                    if len(neighbor_value) > j and neighbor_value[j] == value[i]:
-                        count += 1
-                        break
+                # Store the constraint count for the current value
+                constraint_count[value] = count
             
-            # Store the constraint count for the current value
-            constraint_count[value] = count
-        
         # Sort values based on the constraint count (ascending order)
         sorted_values = sorted(self.domains[var], key=lambda val: constraint_count[val])
         
@@ -267,20 +268,25 @@ class CrosswordCreator():
         return values.
         """
         
-        #create empty dict for unassigned words
-        unassigned = dict()
+        # Create a dictionary for unassigned variables with their domain sizes
+        unassigned = {}
         
-        #find all the words not in assignment
         for var in self.domains:
             if var not in assignment:
+                # Use the length of the domain for each variable
                 unassigned[var] = len(self.domains[var])
         
-        #sort in order of values
-        sorted_unassigned = dict(sorted(unassigned.items(), key=lambda item: item[1]))
-        #return var with lowest val ([0])
-        return sorted_unassigned[0]
+        # Sort unassigned variables first by domain size (ascending) and then by degree (descending)
+        sorted_unassigned = sorted(
+            unassigned.items(),
+            key=lambda item: (item[1], -len(self.crossword.neighbors(item[0])))
+        )
         
-        #raise NotImplementedError
+        # Return the variable with the smallest domain size and highest degree if tied
+        if sorted_unassigned:
+            return sorted_unassigned[0][0]
+        else:
+            return None
 
     def backtrack(self, assignment):
         """
@@ -292,13 +298,28 @@ class CrosswordCreator():
         If no assignment is possible, return None.
         """
         
-        if self.assignment_complete(assignment) == True:
+         # If the assignment is complete, return it
+        if self.assignment_complete(assignment):
             return assignment
-        else:
-            for variable in assignment:
-                if variable.value is None:
-                    for value in self.domains[variable]:
-                        variable.value = self.solve(value)
+
+        # Select an unassigned variable
+        var = self.select_unassigned_variable(assignment)
+
+        # Try each value in the domain of the variable
+        for value in self.order_domain_values(var, assignment):
+            # Check if assigning the value to the variable is consistent with the assignment
+            assignment[var] = value
+            if self.consistent(assignment):
+                # Recursively call backtrack with the new assignment
+                result = self.backtrack(assignment)
+                if result is not None:
+                    return result
+            
+            # If no result is found, remove the assignment and try the next value
+            assignment.pop(var)
+        
+        # If no value leads to a solution, return None
+        return None
             
  
  
