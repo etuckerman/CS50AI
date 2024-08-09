@@ -194,8 +194,9 @@ class CrosswordCreator():
         
         #check if all words are the correct length
         for variable in assignment:
-            if len(variable) != len(assignment[variable]):
-                return False
+            for value in variable:
+                if len(value) != variable.length:
+                    return False
         
         
         
