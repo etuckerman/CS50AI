@@ -220,33 +220,43 @@ class CrosswordCreator():
         that rules out the fewest values among the neighbors of `var`.
         """
         
-        #create empty dict for new var, no. of constraints
-        constraints = dict()
+        # Create a dictionary to store the constraint count for each value
+        constraint_count = {}
+
+        # Iterate over each value in the domain of the variable
+        for value in self.domains[var]:
+            count = 0
+            # Iterate over each neighbor of the variable
+            for neighbor in self.crossword.neighbors(var):
+                # Skip neighbors that are already assigned
+                if neighbor in assignment:
+                    continue
+                
+                # Check if there is an overlap between the variable and its neighbor
+                overlap = self.crossword.overlaps.get((var, neighbor), None)
+                if overlap is None:
+                    continue
+
+                # If there is an overlap, determine the position of the overlap
+                i, j = overlap
+                
+                # Check if assigning the current value to var conflicts with the neighbor's value
+                for neighbor_value in self.domains[neighbor]:
+                    # If the neighbor's value conflicts with the current value, increment the count
+                    if len(neighbor_value) > j and neighbor_value[j] == value[i]:
+                        count += 1
+                        break
+            
+            # Store the constraint count for the current value
+            constraint_count[value] = count
         
-        #loop through var values
-        for val in self.domains[var]:
-            #init constraints = 0
-            constraints = 0
-            #loop through neighbours of var
-            for neighbor in Crossword.neighbors[var]:
-                #check if neighbour is assigned already
-                if neighbor not in assignment:
-                    #loop through vals within neighbors
-                    for val in neighbor:
-                        #check if assigning value to neighbour eliminates current var
-                        #If var and neighbor do not overlap in the crossword puzzle, or
-                        #If val is not present in the domain of values for var
-                        if not self.crossword.overlaps(var, neighbor) or val not in self.domains[var]:
-                            #update var constrainsts number
-                            constraints[var] += 1
-
-        # sort the values in the domain of the variable based on the number of constraints
-        sorted_values = dict(sorted(constraints.items(), key=lambda item: item[1]))
-        # return the ordered values
+        # Sort values based on the constraint count (ascending order)
+        sorted_values = sorted(self.domains[var], key=lambda val: constraint_count[val])
+        
+        # Print the sorted values for debugging
         print(f"sorted values: {sorted_values}")
+        
         return sorted_values
-
-        #raise NotImplementedError
 
     def select_unassigned_variable(self, assignment):
         """
