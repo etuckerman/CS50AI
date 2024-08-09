@@ -220,18 +220,27 @@ class CrosswordCreator():
         constraints = dict()
         
         #loop through var values
+        for val in self.domains[var]:
             #init constraints = 0
-            
+            constraints = 0
             #loop through neighbours of var
+            for neighbor in Crossword.neighbors[var]:
                 #check if neighbour is assigned already
+                if neighbor not in assignment:
                     #loop through vals within neighbors
+                    for val in neighbor:
                         #check if assigning value to neighbour eliminates current var
-        
+                        #If var and neighbor do not overlap in the crossword puzzle, or
+                        #If val is not present in the domain of values for var
+                        if not self.crossword.overlaps(var, neighbor) or val not in self.domains[var]:
+                            #update var constrainsts number
+                            constraints[var] += 1
 
         # sort the values in the domain of the variable based on the number of constraints
-
+        sorted_values = dict(sorted(constraints.items(), key=lambda item: item[1]))
         # return the ordered values
-
+        print(f"sorted values: {sorted_values}")
+        return sorted_values
 
         #raise NotImplementedError
 
