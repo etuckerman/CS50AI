@@ -193,6 +193,20 @@ class CrosswordCreator():
         for variable in assignment:
             if len(variable) != len(assignment[variable]):
                 return False
+        
+        
+        
+        #no conflicts between neighboring variables
+        for x in assignment:
+            for y in assignment:
+                if x != y:
+                    overlap = self.crossword.overlaps[x, y]
+                    if overlap is not None:
+                        i, j = overlap
+                        if assignment[x][i] != assignment[y][j]:
+                            return False
+        
+        return True
 
     def order_domain_values(self, var, assignment):
         """
@@ -201,7 +215,25 @@ class CrosswordCreator():
         The first value in the list, for example, should be the one
         that rules out the fewest values among the neighbors of `var`.
         """
-        raise NotImplementedError
+        
+        #create empty dict for new var, no. of constraints
+        constraints = dict()
+        
+        #loop through var values
+            #init constraints = 0
+            
+            #loop through neighbours of var
+                #check if neighbour is assigned already
+                    #loop through vals within neighbors
+                        #check if assigning value to neighbour eliminates current var
+        
+
+        # sort the values in the domain of the variable based on the number of constraints
+
+        # return the ordered values
+
+
+        #raise NotImplementedError
 
     def select_unassigned_variable(self, assignment):
         """
