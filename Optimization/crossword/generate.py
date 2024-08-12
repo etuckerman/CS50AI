@@ -100,14 +100,13 @@ class CrosswordCreator():
          constraints; in this case, the length of the word.)
         """
         for variable in self.domains:
-            #update the domain of each variable to remove any values that do not have the correct length
+            # update the domain of each variable to remove any values that do not have the correct length
             self.domains[variable] = {
-            value for value in self.domains[variable]
-            if len(value) == variable.length
-        }
+                value for value in self.domains[variable]
+                if len(value) == variable.length
+            }
 
-
-        #raise NotImplementedError
+        # raise NotImplementedError
 
     def revise(self, x, y):
         """
@@ -203,14 +202,13 @@ class CrosswordCreator():
         crossword variable); return False otherwise.
         """
 
-        #check if all variables have been assigned a value
+        # check if all variables have been assigned a value
         if len(assignment) == len(self.crossword.variables):
             return True
         else:
             return False
 
-
-        #raise NotImplementedError
+        # raise NotImplementedError
 
     def consistent(self, assignment):
         """
@@ -218,7 +216,7 @@ class CrosswordCreator():
         puzzle without conflicting characters); return False otherwise.
         """
 
-         # Check if all variables are unique
+        # Check if all variables are unique
         if len(assignment) != len(set(assignment)):
             return False
 
@@ -273,9 +271,6 @@ class CrosswordCreator():
 
         return sorted_values
 
-
-
-
     def select_unassigned_variable(self, assignment):
         """
         Return an unassigned variable not already part of `assignment`.
@@ -315,7 +310,7 @@ class CrosswordCreator():
         If no assignment is possible, return None.
         """
 
-         # If the assignment is complete, return it
+        # If the assignment is complete, return it
         if self.assignment_complete(assignment):
             return assignment
 
@@ -337,8 +332,6 @@ class CrosswordCreator():
 
         # If no value leads to a solution, return None
         return None
-
-
 
 
 #        raise NotImplementedError
