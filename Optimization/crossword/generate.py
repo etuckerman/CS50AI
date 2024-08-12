@@ -120,18 +120,41 @@ class CrosswordCreator():
         """
         
         revision = False
+
+        # Check if there is an overlap constraint between x and y
         if self.crossword.overlaps[x, y] is not None:
-            self.domains[x] = {
+            # Retrieve the overlap constraint, which is a tuple (i, j)
+            overlap_x, overlap_y = self.crossword.overlaps[x, y]
             
-            value_x for value_x in self.domains[x]
-                if value_x not in self.crossword.overlaps[x, y]
-            }
-            revision = True
+            # Get the domain values for y
+            y_domain = self.domains[y]
+
+            # Create a new set for the updated domain of x
+            new_domain_x = set()
             
+            for value_x in self.domains[x]:
+                # Flag to check if there's a matching value in y's domain
+                match_found = False
+                
+                for value_y in y_domain:
+                    # Check if value_x and value_y fit together based on the overlap
+                    if value_x[overlap_x] == value_y[overlap_y]:
+                        match_found = True
+                        break
+                
+                # Include value_x in the new domain if a match was found
+                if match_found:
+                    new_domain_x.add(value_x)
+                else:
+                    # If no match was found, mark revision
+                    revision = True
+            
+            # Update the domain of x if any values were excluded
+            if revision:
+                self.domains[x] = new_domain_x
+
         return revision
         
-        #raise NotImplementedError
-
     def ac3(self, arcs=None):
         """
         Update `self.domains` such that each variable is arc consistent.
