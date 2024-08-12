@@ -1,3 +1,5 @@
+# = https://submit.cs50.io/check50/b3af7738382a7c285eb01c9d0e3bdf53c1f4a63b
+
 import sys
 
 from crossword import *
