@@ -166,29 +166,36 @@ class CrosswordCreator():
         """
         
         print(f"arcs: {arcs}")
+    
         if arcs is None:
-            #begin an initial queue of all of the arcs in the problem
+            # Begin with an initial list of all arcs in the problem
             arcs = []
             for x in self.domains:
                 for y in self.domains:
                     if x != y:
                         arcs.append((x, y))
         else:
-            #begin with initial queue of only the arcs that are in `arcs`
-            #each arc is a tuple, (x, y) of a variable x and a different var y
+            # Begin with the initial list of only the arcs that are in `arcs`
             arcs = arcs.copy()
+        
+        # Use a list as a queue to process arcs
+        queue = arcs
+        
+        while queue:
+            x, y = queue.pop(0)  # Pop the first arc from the queue
             
-        #loop through the arcs and remove the non consistent ones
-        for arc in arcs:
-            if self.revise(arc[0], arc[1]) == False:
-                arcs.remove(arc)
-            
-        #
-        if arcs is None:
-            return False
-        else:
-            return True
-        #raise NotImplementedError
+            # Revise the domain of x with respect to y
+            if self.revise(x, y):
+                # If the domain of x is revised, add all neighbors of x to the queue
+                if not self.domains[x]:  # Check if domain of x is empty
+                    return False
+                
+                # Add all neighbors of x to the queue, except y (the current arc direction)
+                for neighbor in self.crossword.neighbors(x):
+                    if neighbor != y:  # Avoid revising the arc in the opposite direction
+                        queue.append((neighbor, x))
+        
+        return True
 
     def assignment_complete(self, assignment):
         """
