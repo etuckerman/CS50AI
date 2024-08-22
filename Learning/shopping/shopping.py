@@ -105,6 +105,12 @@ def load_data(filename):
     #Each value of labels should either be the integer 1, if the user did go through with a purchase, or 0 otherwise.
     labels = labels.apply(lambda x: 1 if x == True else 0)
     
+    print(evidence.head(10))
+    print(labels.head(10))
+    #print the first row of evidence
+    print(evidence.iloc[0])
+    #print the first value of labels
+    print(labels.iloc[0])
     return(evidence, labels)
     
 
@@ -113,7 +119,10 @@ def train_model(evidence, labels):
     Given a list of evidence lists and a list of labels, return a
     fitted k-nearest neighbor model (k=1) trained on the data.
     """
-    raise NotImplementedError
+    
+    
+    
+    
 
 
 def evaluate(labels, predictions):
