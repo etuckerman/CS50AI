@@ -146,17 +146,26 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    values = ()
-    
-    #convert predictions to df
+    # Convert predictions and labels to pandas Series
+    labels = pd.Series(labels)
     predictions = pd.Series(predictions)
     
-    #compare labels against predictions
-    #True positive rate
-    sensitivity = (labels == predictions).sum() / labels.sum()
+    # Calculate True Positives, False Negatives, True Negatives, and False Positives
+    true_positives = ((labels == 1) & (predictions == 1)).sum()
+    false_negatives = ((labels == 1) & (predictions == 0)).sum()
+    true_negatives = ((labels == 0) & (predictions == 0)).sum()
+    false_positives = ((labels == 0) & (predictions == 1)).sum()
+
+
+    #values of 1 are: true positives and false negatives
+    #values of 0 are: true negatives and false positives
     
-    #True negative rate
-    specificity = (labels == predictions).sum() / (len(labels) - labels.sum())
+    # Calculate Sensitivity and Specificity
+    #how accurate values of 1 are
+    sensitivity = true_positives / (true_positives + false_negatives)
+    
+    #how accurate values of 0 are
+    specificity = false_positives / (false_positives + true_negatives)
     
     return(sensitivity, specificity)
     
