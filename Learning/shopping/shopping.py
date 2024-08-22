@@ -61,6 +61,7 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
+    month_dict = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
     
     df = pd.read_csv(filename)
     print(df.head(10))
@@ -75,7 +76,37 @@ def load_data(filename):
     
     print(evidence.head(10))
     print(labels.head(10))
-
+    
+    #Administrative, Informational, ProductRelated, Month, 
+    # OperatingSystems, Browser, Region, TrafficType, VisitorType, 
+    # and Weekend should all be of type int
+    evidence['Administrative'] = evidence['Administrative'].astype(int)
+    evidence['Informational'] = evidence['Informational'].astype(int)
+    evidence['ProductRelated'] = evidence['ProductRelated'].astype(int)
+    evidence['Month'] = evidence['Month'].apply(lambda x: month_dict.index(x))
+    evidence['OperatingSystems'] = evidence['OperatingSystems'].astype(int)
+    evidence['Browser'] = evidence['Browser'].astype(int)
+    evidence['Region'] = evidence['Region'].astype(int)
+    evidence['TrafficType'] = evidence['TrafficType'].astype(int)
+    evidence['VisitorType'] = evidence['VisitorType'].apply(lambda x: 1 if x == 'Returning_Visitor' else 0)
+    evidence['Weekend'] = evidence['Weekend'].apply(lambda x: 1 if x == True else 0)
+    
+    #Administrative_Duration, Informational_Duration, ProductRelated_Duration,
+    # BounceRates, ExitRates, PageValues, and SpecialDay should all be of type float.
+    
+    evidence['Administrative_Duration'] = evidence['Administrative_Duration'].astype(float)
+    evidence['Informational_Duration'] = evidence['Informational_Duration'].astype(float)
+    evidence['ProductRelated_Duration'] = evidence['ProductRelated_Duration'].astype(float)
+    evidence['BounceRates'] = evidence['BounceRates'].astype(float)
+    evidence['ExitRates'] = evidence['ExitRates'].astype(float)
+    evidence['PageValues'] = evidence['PageValues'].astype(float)
+    evidence['SpecialDay'] = evidence['SpecialDay'].astype(float)
+    
+    #Each value of labels should either be the integer 1, if the user did go through with a purchase, or 0 otherwise.
+    labels = labels.apply(lambda x: 1 if x == True else 0)
+    
+    return(evidence, labels)
+    
 
 def train_model(evidence, labels):
     """
