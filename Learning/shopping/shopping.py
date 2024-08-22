@@ -1,5 +1,7 @@
 import csv
 import sys
+import numpy as np
+import pandas as pd
 
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
@@ -59,7 +61,20 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
-    raise NotImplementedError
+    
+    df = pd.read_csv(filename)
+    print(df.head(10))
+    
+    # Split DataFrame into 'evidence' and 'labels'
+    
+    #  selects all columns except the last one.
+    evidence = df.iloc[:, :-1]
+    
+    #  selects the last column.
+    labels = df.iloc[:, -1]
+    
+    print(evidence.head(10))
+    print(labels.head(10))
 
 
 def train_model(evidence, labels):
