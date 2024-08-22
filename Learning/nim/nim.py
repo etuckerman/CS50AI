@@ -173,7 +173,17 @@ class NimAI():
         If multiple actions have the same Q-value, any of those
         options is an acceptable return value.
         """
-        raise NotImplementedError
+        
+        if epsilon == False:
+            return self.best_future_reward(self, state)[0]
+        else:
+            #with probability self.epsilon
+            if random.random() < self.epsilon:
+                #choose a random available action
+                return random.choice(Nim.available_actions(state))
+            else:
+                #otherwise choose the best action available
+                return self.best_future_reward(self, state)[0]
 
 
 def train(n):
