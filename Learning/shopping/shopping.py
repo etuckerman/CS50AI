@@ -146,7 +146,21 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    raise NotImplementedError
+    values = ()
+    
+    #convert predictions to df
+    predictions = pd.Series(predictions)
+    
+    #compare labels against predictions
+    #True positive rate
+    sensitivity = (labels == predictions).sum() / labels.sum()
+    
+    #True negative rate
+    specificity = (labels == predictions).sum() / (len(labels) - labels.sum())
+    
+    return(sensitivity, specificity)
+    
+    
 
 
 if __name__ == "__main__":
