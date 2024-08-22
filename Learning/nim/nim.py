@@ -110,7 +110,6 @@ class NimAI():
             return self.q[(state, action)]
         
         
-
     def update_q_value(self, state, action, old_q, reward, future_rewards):
         """
         Update the Q-value for the state `state` and the action `action`
@@ -141,8 +140,24 @@ class NimAI():
         Q-value in `self.q`. If there are no available actions in
         `state`, return 0.
         """
-        raise NotImplementedError
-
+        actions = Nim.available_actions(state)
+        future_rewards = dict()
+        if actions is None:
+            return 0
+        else:
+            for action in actions:
+                if self.get_q_value(state, action) is None:
+                    q_val = 0
+                else:
+                    q_val = self.get_q_value(state, action)
+                
+                
+                future_rewards.update(state, q_val)
+                
+        #return future_rewards sorted by values, highest to lowest
+        return sorted(future_rewards.values(), reverse=True)[0]
+        
+        
     def choose_action(self, state, epsilon=True):
         """
         Given a state `state`, return an action `(i, j)` to take.
