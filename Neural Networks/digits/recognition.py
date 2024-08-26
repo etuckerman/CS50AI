@@ -3,6 +3,7 @@ import pygame
 import sys
 import tensorflow as tf
 import time
+import time
 
 # Check command-line arguments
 if len(sys.argv) != 2:
@@ -108,7 +109,7 @@ while True:
     # Generate classification
     if mouse and classifyButton.collidepoint(mouse):
         classification = model.predict(
-            [np.array(handwriting).reshape(1, 28, 28, 1)]
+            np.array(handwriting).reshape(1, 28, 28, 1)
         ).argmax()
 
     # Show classification if one exists
