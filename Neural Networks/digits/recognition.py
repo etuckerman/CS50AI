@@ -2,8 +2,6 @@ import numpy as np
 import pygame
 import sys
 import tensorflow as tf
-import time
-import time
 
 # Check command-line arguments
 if len(sys.argv) != 2:
