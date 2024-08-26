@@ -1,12 +1,12 @@
 import csv
+import numpy as np
 import tensorflow as tf
-
 from sklearn.model_selection import train_test_split
 
 # Read data in from file
 with open("banknotes.csv") as f:
     reader = csv.reader(f)
-    next(reader)
+    next(reader)  # Skip header row
 
     data = []
     for row in reader:
@@ -21,6 +21,12 @@ labels = [row["label"] for row in data]
 X_training, X_testing, y_training, y_testing = train_test_split(
     evidence, labels, test_size=0.4
 )
+
+# Convert lists to NumPy arrays
+X_training = np.array(X_training)
+X_testing = np.array(X_testing)
+y_training = np.array(y_training)
+y_testing = np.array(y_testing)
 
 # Create a neural network
 model = tf.keras.models.Sequential()
