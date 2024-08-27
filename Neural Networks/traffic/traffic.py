@@ -143,37 +143,53 @@ def load_data(data_dir):
 #model 3, hyper accuracy setup
 #333/333 - 5s - 16ms/step - accuracy: 0.9876 - loss: 0.0425
 def get_model():
+    # Create a Sequential model
     model = tf.keras.models.Sequential([
-        # Convolutional layer with Batch Normalization
-        tf.keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)),
-        tf.keras.layers.BatchNormalization(),
+        # Input layer specifying the shape of the input data
+        tf.keras.layers.Input(shape=(IMG_WIDTH, IMG_HEIGHT, 3)),
+        
+        # First convolutional layer with 64 filters, 3x3 kernel, ReLU activation, and same padding
         tf.keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
+        # Batch normalization to stabilize and speed up training
         tf.keras.layers.BatchNormalization(),
+        # Second convolutional layer with the same parameters as the first layer
+        tf.keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
+        # Batch normalization
+        tf.keras.layers.BatchNormalization(),
+        # MaxPooling layer to reduce spatial dimensions by taking the maximum value in 2x2 pools
         tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+        # Dropout layer to prevent overfitting by randomly setting 50% of the input units to 0
         tf.keras.layers.Dropout(0.5),
-
-        # Second set of Conv2D layers with Batch Normalization
+        
+        # Second set of convolutional layers with 128 filters
         tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
         tf.keras.layers.BatchNormalization(),
+        # MaxPooling layer to reduce spatial dimensions
         tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+        # Dropout layer
         tf.keras.layers.Dropout(0.5),
-
-        # Flatten and Dense layers
+        
+        # Flatten layer to convert 2D matrix into a 1D vector
         tf.keras.layers.Flatten(),
+        # Dense layer with 512 units and ReLU activation function
         tf.keras.layers.Dense(512, activation='relu'),
+        # Dropout layer
         tf.keras.layers.Dropout(0.5),
+        # Output layer with softmax activation for multi-class classification
         tf.keras.layers.Dense(NUM_CATEGORIES, activation='softmax')
     ])
     
+    # Compile the model with Adam optimizer, categorical crossentropy loss, and accuracy metric
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),  # Using a low learning rate
-        loss='categorical_crossentropy',
-        metrics=['accuracy']
+        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),  # Using a low learning rate for stable convergence
+        loss='categorical_crossentropy',  # Suitable for multi-class classification
+        metrics=['accuracy']  # Metric to monitor during training and evaluation
     )
     
     return model
+
 
 
 if __name__ == "__main__":
