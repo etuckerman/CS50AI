@@ -65,13 +65,18 @@ def load_data(data_dir):
     # Loop through each folder and image file
     for folder in os.listdir(data_dir):
         for image in os.listdir(os.path.join(data_dir, folder)):
-            # Use OpenCV to read each image
-            img = cv2.imread(os.path.join(data_dir, folder, image))
+            # Use OpenCV to read image
+            # Convert individual image to np.ndarray
             # Ensure size of IMG_WIDTH x IMG_HEIGHT x 3
-            img = cv2.resize(img, (IMG_WIDTH, IMG_HEIGHT))
+            # Read and resize the image in one line
+            img = cv2.resize
+            (cv2.imread(os.path.join
+                                    (data_dir, folder, image)),
+                                    (IMG_WIDTH, IMG_HEIGHT, 3))
             # Append image and label to the lists
             images.append(img)
             labels.append(int(folder))
+    
 
     return images, labels
     
@@ -91,7 +96,7 @@ def get_model():
 
         # Convolutional layer. Learn 32 filters using a 3x3 kernel
         tf.keras.layers.Conv2D(
-            32, (3, 3), activation="relu", input_shape=(28, 28, 1)
+            32, (3, 3), activation="relu", input_shape = (IMG_WIDTH, IMG_HEIGHT, 3)
         ),
 
         # Max-pooling layer, using 2x2 pool size
