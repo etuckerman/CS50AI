@@ -79,44 +79,94 @@ def load_data(data_dir):
 
     return images, labels
 
-
-def get_model():
-    """
-    Returns a compiled convolutional neural network model. Assume that the
-    `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
-    The output layer should have `NUM_CATEGORIES` units, one for each category.
-    """
+#model 1, low accuracy
+# def get_model():
+    # """
+    # Returns a compiled convolutional neural network model. Assume that the
+    # `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
+    # The output layer should have `NUM_CATEGORIES` units, one for each category.
+    # """
     
-    # Create a convolutional neural network
+    # # Create a convolutional neural network
+    # model = tf.keras.models.Sequential([
+
+    #     # Convolutional layer. Learn 32 filters using a 3x3 kernel
+    #     tf.keras.layers.Conv2D(
+    #         32, (3, 3), activation="relu", input_shape = (IMG_WIDTH, IMG_HEIGHT, 3)
+    #     ),
+
+    #     # Max-pooling layer, using 2x2 pool size
+    #     tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+
+    #     # Flatten units
+    #     tf.keras.layers.Flatten(),
+
+    #     # Add a hidden layer with dropout
+    #     tf.keras.layers.Dense(128, activation="relu"),
+    #     tf.keras.layers.Dropout(0.5),
+
+    #     # Add an output layer with output units for all NUM_CATAGORIES
+    #     tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax")
+    # ])
+
+    # # Train neural network
+    # model.compile(
+    #     optimizer="adam",
+    #     loss="categorical_crossentropy",
+    #     metrics=["accuracy"]
+    # )
+    
+    # return model
+
+#model 2, semi-low accuracy
+# def get_model():
+    # model = tf.keras.models.Sequential([
+    #     tf.keras.layers.Conv2D(32, (3, 3), activation="relu", input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)),
+    #     tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+    #     tf.keras.layers.Flatten(),
+    #     tf.keras.layers.Dense(128, activation="relu"),
+    #     tf.keras.layers.Dropout(0.5),
+    #     tf.keras.layers.Dense(NUM_CATEGORIES, activation="sigmoid")  # For binary classification, change NUM_CATEGORIES to 1
+    # ])
+    
+    # model.compile(
+    #     optimizer="sgd",
+    #     loss="binary_crossentropy",
+    #     metrics=["accuracy"]
+    # )
+    
+    # return model
+#model 3, hyper accuracy setup
+def get_model():
     model = tf.keras.models.Sequential([
-
-        # Convolutional layer. Learn 32 filters using a 3x3 kernel
-        tf.keras.layers.Conv2D(
-            32, (3, 3), activation="relu", input_shape = (IMG_WIDTH, IMG_HEIGHT, 3)
-        ),
-
-        # Max-pooling layer, using 2x2 pool size
+        # Convolutional layer with Batch Normalization
+        tf.keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
+        tf.keras.layers.BatchNormalization(),
         tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
-
-        # Flatten units
-        tf.keras.layers.Flatten(),
-
-        # Add a hidden layer with dropout
-        tf.keras.layers.Dense(128, activation="relu"),
         tf.keras.layers.Dropout(0.5),
 
-        # Add an output layer with output units for all NUM_CATAGORIES
-        tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax")
-    ])
+        # Second set of Conv2D layers with Batch Normalization
+        tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+        tf.keras.layers.Dropout(0.5),
 
-    # Train neural network
+        # Flatten and Dense layers
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(512, activation='relu'),
+        tf.keras.layers.Dropout(0.5),
+        tf.keras.layers.Dense(NUM_CATEGORIES, activation='softmax')
+    ])
+    
     model.compile(
-        optimizer="adam",
-        loss="categorical_crossentropy",
-        metrics=["accuracy"]
+        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),  # Using a low learning rate
+        loss='categorical_crossentropy',
+        metrics=['accuracy']
     )
     
     return model
 
-if __name__ == "__main__":
-    main()
