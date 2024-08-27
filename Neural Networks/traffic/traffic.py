@@ -58,22 +58,22 @@ def load_data(data_dir):
     be a list of integer labels, representing the categories for each of the
     corresponding `images`.
     """
-    #empty images list
+    # Empty images and labels lists
     images = []
-    
-    #loop through each folder and image file
+    labels = []
+
+    # Loop through each folder and image file
     for folder in os.listdir(data_dir):
-        for image in os.listdir(folder):
-            #use opencv to read each image
-            img = cv2.imread(image)
-            #ensure size of IMG_WIDTH x IMG_HEIGHT x 3.
-            img = cv2.resize(img, (IMG_WIDTH, IMG_HEIGHT, 3))
-            #make img numpy.ndarray
-            img = np.ndarray(img)
-            #save img as a tuple in the format (images, labels)
-            images.append((img, folder))
-    
-    return images
+        for image in os.listdir(os.path.join(data_dir, folder)):
+            # Use OpenCV to read each image
+            img = cv2.imread(os.path.join(data_dir, folder, image))
+            # Ensure size of IMG_WIDTH x IMG_HEIGHT x 3
+            img = cv2.resize(img, (IMG_WIDTH, IMG_HEIGHT))
+            # Append image and label to the lists
+            images.append(img)
+            labels.append(int(folder))
+
+    return images, labels
     
     
     #raise NotImplementedError
