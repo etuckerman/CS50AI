@@ -66,8 +66,8 @@ def load_data(data_dir):
         for image in os.listdir(folder):
             #use opencv to read each image
             img = cv2.imread(image)
-            #ensure size of IMG_WIDTH and IMG_HEIGHT
-            img = cv2.resize(img, (IMG_WIDTH, IMG_HEIGHT))
+            #ensure size of IMG_WIDTH x IMG_HEIGHT x 3.
+            img = cv2.resize(img, (IMG_WIDTH, IMG_HEIGHT, 3))
             #make img numpy.ndarray
             img = np.ndarray(img)
             #save img as a tuple in the format (images, labels)
@@ -85,7 +85,10 @@ def get_model():
     `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
     The output layer should have `NUM_CATEGORIES` units, one for each category.
     """
-    raise NotImplementedError
+    
+    
+    
+    # raise NotImplementedError
 
 
 if __name__ == "__main__":
