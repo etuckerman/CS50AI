@@ -86,9 +86,29 @@ def get_model():
     The output layer should have `NUM_CATEGORIES` units, one for each category.
     """
     
+    # Create a convolutional neural network
+    model = tf.keras.models.Sequential([
+
+    # Convolutional layer. Learn 32 filters using a 3x3 kernel
+    tf.keras.layers.Conv2D(
+        32, (3, 3), activation="relu", input_shape=(28, 28, 1)
+    ),
+
+    # Max-pooling layer, using 2x2 pool size
+    tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+
+    # Flatten units
+    tf.keras.layers.Flatten(),
+
+    # Add a hidden layer with dropout
+    tf.keras.layers.Dense(128, activation="relu"),
+    tf.keras.layers.Dropout(0.5),
+
+    # Add an output layer with output units for all 10 digits
+    tf.keras.layers.Dense(10, activation="softmax")
+])
     
-    
-    # raise NotImplementedError
+    return model
 
 
 if __name__ == "__main__":
