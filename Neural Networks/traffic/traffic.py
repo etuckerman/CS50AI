@@ -6,12 +6,15 @@ import tensorflow as tf
 
 from sklearn.model_selection import train_test_split
 
+TF_ENABLE_ONEDNN_OPTS = 0
 EPOCHS = 10
 IMG_WIDTH = 30
 IMG_HEIGHT = 30
 NUM_CATEGORIES = 43
 TEST_SIZE = 0.4
 
+# Set environment variable for TensorFlow
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 def main():
 
@@ -80,45 +83,46 @@ def load_data(data_dir):
     return images, labels
 
 #model 1, low accuracy
+#333/333 - 0s - 1ms/step - accuracy: 0.0558 - loss: 3.4993
 # def get_model():
-    # """
-    # Returns a compiled convolutional neural network model. Assume that the
-    # `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
-    # The output layer should have `NUM_CATEGORIES` units, one for each category.
-    # """
+#     """
+#     Returns a compiled convolutional neural network model. Assume that the
+#     `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
+#     The output layer should have `NUM_CATEGORIES` units, one for each category.
+#     """
     
-    # # Create a convolutional neural network
-    # model = tf.keras.models.Sequential([
+#     # Create a convolutional neural network
+#     model = tf.keras.models.Sequential([
 
-    #     # Convolutional layer. Learn 32 filters using a 3x3 kernel
-    #     tf.keras.layers.Conv2D(
-    #         32, (3, 3), activation="relu", input_shape = (IMG_WIDTH, IMG_HEIGHT, 3)
-    #     ),
+#         # Convolutional layer. Learn 32 filters using a 3x3 kernel
+#         tf.keras.layers.Conv2D(
+#             32, (3, 3), activation="relu", input_shape = (IMG_WIDTH, IMG_HEIGHT, 3)
+#         ),
 
-    #     # Max-pooling layer, using 2x2 pool size
-    #     tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+#         # Max-pooling layer, using 2x2 pool size
+#         tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
 
-    #     # Flatten units
-    #     tf.keras.layers.Flatten(),
+#         # Flatten units
+#         tf.keras.layers.Flatten(),
 
-    #     # Add a hidden layer with dropout
-    #     tf.keras.layers.Dense(128, activation="relu"),
-    #     tf.keras.layers.Dropout(0.5),
+#         # Add a hidden layer with dropout
+#         tf.keras.layers.Dense(128, activation="relu"),
+#         tf.keras.layers.Dropout(0.5),
 
-    #     # Add an output layer with output units for all NUM_CATAGORIES
-    #     tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax")
-    # ])
+#         # Add an output layer with output units for all NUM_CATAGORIES
+#         tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax")
+#     ])
 
-    # # Train neural network
-    # model.compile(
-    #     optimizer="adam",
-    #     loss="categorical_crossentropy",
-    #     metrics=["accuracy"]
-    # )
+#     # Train neural network
+#     model.compile(
+#         optimizer="adam",
+#         loss="categorical_crossentropy",
+#         metrics=["accuracy"]
+#     )
     
-    # return model
+#     return model
 
-#model 2, semi-low accuracy
+#model 2, semi-low accuracy (0.38)
 # def get_model():
     # model = tf.keras.models.Sequential([
     #     tf.keras.layers.Conv2D(32, (3, 3), activation="relu", input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)),
@@ -137,6 +141,7 @@ def load_data(data_dir):
     
     # return model
 #model 3, hyper accuracy setup
+#
 def get_model():
     model = tf.keras.models.Sequential([
         # Convolutional layer with Batch Normalization
@@ -170,3 +175,6 @@ def get_model():
     
     return model
 
+
+if __name__ == "__main__":
+    main()
