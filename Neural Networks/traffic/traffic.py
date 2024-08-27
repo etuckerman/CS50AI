@@ -58,30 +58,26 @@ def load_data(data_dir):
     be a list of integer labels, representing the categories for each of the
     corresponding `images`.
     """
-    # Empty images and labels lists
+    
     images = []
     labels = []
 
-    # Loop through each folder and image file
     for folder in os.listdir(data_dir):
-        for image in os.listdir(os.path.join(data_dir, folder)):
-            # Use OpenCV to read image
-            # Convert individual image to np.ndarray
-            # Ensure size of IMG_WIDTH x IMG_HEIGHT x 3
-            # Read and resize the image in one line
-            img = cv2.resize
-            (cv2.imread(os.path.join
-                                    (data_dir, folder, image)),
-                                    (IMG_WIDTH, IMG_HEIGHT, 3))
-            # Append image and label to the lists
-            images.append(img)
-            labels.append(int(folder))
-    
+        folder_path = os.path.join(data_dir, folder)
+        if os.path.isdir(folder_path):  # Ensure folder_path is a directory
+            for image_file in os.listdir(folder_path):
+                image_path = os.path.join(folder_path, image_file)
+                img = cv2.imread(image_path)
+                if img is not None:
+                    img = cv2.resize(img, (IMG_WIDTH, IMG_HEIGHT))
+                    images.append(img)
+                    labels.append(int(folder))
+
+    # Convert lists to NumPy arrays
+    images = np.array(images)
+    labels = np.array(labels)
 
     return images, labels
-    
-    
-    #raise NotImplementedError
 
 
 def get_model():
