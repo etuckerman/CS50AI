@@ -141,7 +141,7 @@ def load_data(data_dir):
     
     # return model
 #model 3, hyper accuracy setup
-#
+#333/333 - 5s - 16ms/step - accuracy: 0.9876 - loss: 0.0425
 def get_model():
     model = tf.keras.models.Sequential([
         # Convolutional layer with Batch Normalization
