@@ -2,6 +2,7 @@ from collections import Counter
 
 import math
 import nltk
+nltk.download('punkt_tab')
 import os
 import sys
 
