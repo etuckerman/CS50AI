@@ -19,6 +19,7 @@ NONTERMINALS = """
 S -> N V
 S -> NP VP
 S -> NP VP Conj NP VP
+S -> NP VP Conj NP VP Adv
 NP -> Det N
 NP -> Det N PP
 NP -> N
@@ -30,6 +31,8 @@ PP -> P NP
 ADJP -> Adj
 ADVP -> Adv
 NP -> Det ADJP N
+ADVPV -> ADVP V
+VP -> ADVPV NP
 """
 
 grammar = nltk.CFG.fromstring(NONTERMINALS + TERMINALS)
