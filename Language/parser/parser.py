@@ -14,14 +14,22 @@ V -> "arrived" | "came" | "chuckled" | "had" | "lit" | "said" | "sat"
 V -> "smiled" | "tell" | "were"
 """
 
+
 NONTERMINALS = """
 S -> N V
 S -> NP VP
-NP -> N
+S -> NP VP Conj NP VP
 NP -> Det N
 NP -> Det N PP
+NP -> N
+VP -> V PP
+VP -> V
 VP -> V NP
+VP -> V NP PP
 PP -> P NP
+ADJP -> Adj
+ADVP -> Adv
+NP -> Det ADJP N
 """
 
 grammar = nltk.CFG.fromstring(NONTERMINALS + TERMINALS)
