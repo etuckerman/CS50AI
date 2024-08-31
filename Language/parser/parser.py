@@ -16,6 +16,12 @@ V -> "smiled" | "tell" | "were"
 
 NONTERMINALS = """
 S -> N V
+S -> NP VP
+NP -> N
+NP -> Det N
+NP -> Det N PP
+VP -> V NP
+PP -> P NP
 """
 
 grammar = nltk.CFG.fromstring(NONTERMINALS + TERMINALS)
@@ -112,6 +118,7 @@ def np_chunk(tree):
             if contains_np == False:
                 np_chunks.append(subtree)
     
+    return np_chunks
     # raise NotImplementedError
 
 
