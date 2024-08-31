@@ -16,10 +16,6 @@ V -> "smiled" | "tell" | "were"
 
 NONTERMINALS = """
 S -> N V
-AP -> A | A AP
-NP -> N | D NP | AP NP | N PP
-PP -> P NP
-VP -> V | V NP | V NP PP
 """
 
 grammar = nltk.CFG.fromstring(NONTERMINALS + TERMINALS)
@@ -78,7 +74,7 @@ def preprocess(sentence):
             if letter.isalpha() == True:
                 hasAlpha = True
         if hasAlpha == False:
-            words.pop(word)
+            words.remove(word)
         else:
             word = word.lower()
     
@@ -101,7 +97,19 @@ def np_chunk(tree):
     np_chunks = []
     
     #iterate through each subtree in the tree
-    
+    for subtree in tree.subtrees():
+        #if subtree is a noun phrase
+        if subtree.label() == "NP":
+            #initialize flag to check if subtree contains another noun phrase
+            contains_np = False
+            #iterate through each subtree in the subtree
+            for subsubtree in subtree.subtrees():
+                #if subtree is a noun phrase
+                if subsubtree.label() == "NP" and subsubtree != subtree:
+                    contains_np = True
+            #if subtree does not contain another noun phrase, add to list of noun phrase chunks
+            if contains_np == False:
+                np_chunks.append(subtree)
     
     # raise NotImplementedError
 
