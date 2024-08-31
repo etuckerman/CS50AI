@@ -16,23 +16,11 @@ V -> "smiled" | "tell" | "were"
 
 
 NONTERMINALS = """
-S -> N V
-S -> NP VP
-S -> NP VP Conj NP VP
-S -> NP VP Conj NP VP Adv
-NP -> Det N
-NP -> Det N PP
-NP -> N
-VP -> V PP
-VP -> V
-VP -> V NP
-VP -> V NP PP
+S -> N V | NP VP | VP NP | S Conj S
+NP -> N | Det N | NP PP | Det ADJP N
+VP -> V | V PP | V NP | VP Adv | Adv VP
 PP -> P NP
-ADJP -> Adj
-ADVP -> Adv
-NP -> Det ADJP N
-ADVPV -> ADVP V
-VP -> ADVPV NP
+ADJP -> Adj | Adj ADJP
 """
 
 grammar = nltk.CFG.fromstring(NONTERMINALS + TERMINALS)
@@ -79,13 +67,13 @@ def preprocess(sentence):
     and removing any word that does not contain at least one alphabetic
     character.
     """
-    
+
     #tokenize using word_tokenize to split sentence into words
     #params for tokenizer: lowercase string, contains at least one alphabetic char
-    
+
     words = nltk.word_tokenize(sentence)
     processed_words = []
-    
+
     for word in words:
         # Check if the word contains at least one alphabetic character
         has_alpha = False
@@ -93,13 +81,13 @@ def preprocess(sentence):
             if char.isalpha():
                 has_alpha = True
                 break
-        
+
         # If the word contains an alphabetic character, convert to lowercase and add to the list
         if has_alpha:
             processed_words.append(word.lower())
-    
+
     return processed_words
-    
+
     # raise NotImplementedError
 
 
@@ -110,10 +98,10 @@ def np_chunk(tree):
     whose label is "NP" that does not itself contain any other
     noun phrases as subtrees.
     """
-    
+
     #initialize list of noun phrase chunks
     np_chunks = []
-    
+
     #iterate through each subtree in the tree
     for subtree in tree.subtrees():
         #if subtree is a noun phrase
@@ -128,7 +116,7 @@ def np_chunk(tree):
             #if subtree does not contain another noun phrase, add to list of noun phrase chunks
             if contains_np == False:
                 np_chunks.append(subtree)
-    
+
     return np_chunks
     # raise NotImplementedError
 
