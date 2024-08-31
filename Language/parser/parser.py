@@ -1,3 +1,5 @@
+# = https://submit.cs50.io/check50/d777e7a2fe4346d4f7fcaf71086190167541c824
+
 import nltk
 import sys
 
