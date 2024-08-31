@@ -67,20 +67,21 @@ def preprocess(sentence):
     #params for tokenizer: lowercase string, contains at least one alphabetic char
     
     words = nltk.word_tokenize(sentence)
+    processed_words = []
     
     for word in words:
-        hasAlpha = False
-        for letter in word:
-            if letter.isalpha() == True:
-                hasAlpha = True
-        if hasAlpha == False:
-            words.remove(word)
-        else:
-            word = word.lower()
+        # Check if the word contains at least one alphabetic character
+        has_alpha = False
+        for char in word:
+            if char.isalpha():
+                has_alpha = True
+                break
+        
+        # If the word contains an alphabetic character, convert to lowercase and add to the list
+        if has_alpha:
+            processed_words.append(word.lower())
     
-    return words
-    
-    
+    return processed_words
     
     # raise NotImplementedError
 
