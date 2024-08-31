@@ -1,14 +1,11 @@
 import nltk
 
 grammar = nltk.CFG.fromstring("""
-    S -> NP VP
-
-    NP -> D N | N
-    VP -> V | V NP
-
-    D -> "the" | "a"
-    N -> "she" | "city" | "car"
-    V -> "saw" | "walked"
+    S -> NP V
+    NP -> N | A NP
+    A -> "small" | "white"
+    N -> "cats" | "trees"
+    V -> "climb" | "run"
 """)
 
 parser = nltk.ChartParser(grammar)
