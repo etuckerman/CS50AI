@@ -55,8 +55,8 @@ def get_mask_token_index(mask_token_id, inputs):
     mask_token_index = tf.where(inputs["input_ids"] == mask_token_id)
     
     #return mask_token_index
-    if mask_token_index:
-        return mask_token_index[0]
+    if tf.size(mask_token_index) > 0:
+        return mask_token_index[0][0]
     else:
         return None
 
@@ -68,20 +68,16 @@ def get_color_for_attention_score(attention_score):
     given `attention_score`. Each value should be in the range [0, 255].
     """
     
-    
     #find single colour value
     colorValue = attention_score * 255
     
     #convert color value to int
     colorValue = int(colorValue)
     
+    assert(colorValue) >= 0 and (colorValue) <= 255
+    
     #put color value in a tuple of (r,g,b)
     return tuple(colorValue, colorValue, colorValue)
-    
-    
-    
-    
-
 
 
 def visualize_attentions(tokens, attentions):
@@ -94,12 +90,22 @@ def visualize_attentions(tokens, attentions):
     include both the layer number (starting count from 1) and head number
     (starting count from 1).
     """
-    # TODO: Update this function to produce diagrams for all layers and heads.
+    
+    #find layer_number
+    layer_number = len(attentions)
+    
+    #find head_number
+    head_number = len(attentions[0])
+    
+    
+    
+    
+    #Update this function to produce diagrams for all layers and heads.
     generate_diagram(
-        1,
-        1,
+        layer_number,
+        head_number,
         tokens,
-        attentions[0][0][0]
+        attentions
     )
 
 
