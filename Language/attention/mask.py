@@ -46,20 +46,15 @@ def get_mask_token_index(mask_token_id, inputs):
     `None` if not present in the `inputs`.
     """
     
-    #mask_token_index should be the index of the mask token in the input_ids
-    #inputs["input_ids"] is a tensor of the input ids
-    #mask_token
-    
-    inputs["input_ids"]
-    #index should be 0-indexed
-    mask_token_index = tf.where(inputs["input_ids"] == mask_token_id)
-    
-    #return mask_token_index
-    if tf.size(mask_token_index) > 0:
-        return mask_token_index[0][0]
-    else:
-        return None
 
+    # Iterate through tokens to find the mask token
+    for i, token_id in enumerate(inputs.input_ids[0]):
+        # Check if the token is the mask token
+        if token_id == mask_token_id:
+            # Return the index of the mask token
+            return i
+    # If the mask token is not found, return None
+    return None
 
 
 def get_color_for_attention_score(attention_score):
@@ -67,15 +62,10 @@ def get_color_for_attention_score(attention_score):
     Return a tuple of three integers representing a shade of gray for the
     given `attention_score`. Each value should be in the range [0, 255].
     """
-    
-    # Multiply attention_score by 255 and round to the nearest integer
-    colorValue = int(round(attention_score * 255))
-    
-    # Ensure colorValue is within the range [0, 255]
-    colorValue = max(0, min(colorValue, 255))
-    
-    # Return a tuple of (r, g, b) where r, g, and b have the same value
-    return (colorValue, colorValue, colorValue)
+    # Multiply the attention score by 255 and round to the nearest integer
+    rgb = round(255 * attention_score.numpy())
+    # Return a tuple of three identical values
+    return (rgb, rgb, rgb)
 
 
 def visualize_attentions(tokens, attentions):
@@ -89,22 +79,21 @@ def visualize_attentions(tokens, attentions):
     (starting count from 1).
     """
     
-    #find layer_number
-    layer_number = len(attentions)
-    
-    #find head_number
-    head_number = len(attentions[0])
-    
-    
-    
-    
-    #Update this function to produce diagrams for all layers and heads.
-    generate_diagram(
-        layer_number,
-        head_number,
-        tokens,
-        attentions
-    )
+    # Iterate over each attention layer
+    for i, attention in enumerate(attentions):
+        # Iterate over each attention head
+        for j in range(len(attention[0])):
+            # Generate a diagram for the attention head
+            generate_diagram(
+                # Layer number starts from 1
+                i + 1,
+                # Head number starts from 1
+                j + 1,
+                # List of tokens
+                tokens,
+                # Attention weights for the head
+                attentions[i][0][j]
+            )
 
 
 def generate_diagram(layer_number, head_number, tokens, attention_weights):
@@ -154,7 +143,7 @@ def generate_diagram(layer_number, head_number, tokens, attention_weights):
             draw.rectangle((x, y, x + GRID_SIZE, y + GRID_SIZE), fill=color)
 
     # Save image
-    img.save(f"Attention_Layer{layer_number}_Head{head_number}.png")
+    img.save(r"C:\Users\ellio\source\repos\etuckerman\CS50AI\Language\attention\attention_images\Attention_Layer{}_Head{}.png".format(layer_number, head_number))
 
 
 if __name__ == "__main__":
