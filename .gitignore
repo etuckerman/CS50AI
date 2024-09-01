@@ -1,2 +1,3 @@
 # Ignore the GTSRB folder
 Neural Networks/traffic/gtsrb/
+Language/attention/attention_images/*.png
