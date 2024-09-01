@@ -68,16 +68,14 @@ def get_color_for_attention_score(attention_score):
     given `attention_score`. Each value should be in the range [0, 255].
     """
     
-    #find single colour value
-    colorValue = attention_score * 255
+    # Multiply attention_score by 255 and round to the nearest integer
+    colorValue = int(round(attention_score * 255))
     
-    #convert color value to int
-    colorValue = int(colorValue)
+    # Ensure colorValue is within the range [0, 255]
+    colorValue = max(0, min(colorValue, 255))
     
-    assert(colorValue) >= 0 and (colorValue) <= 255
-    
-    #put color value in a tuple of (r,g,b)
-    return tuple(colorValue, colorValue, colorValue)
+    # Return a tuple of (r, g, b) where r, g, and b have the same value
+    return (colorValue, colorValue, colorValue)
 
 
 def visualize_attentions(tokens, attentions):
